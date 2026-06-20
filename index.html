@@ -1167,20 +1167,96 @@
     <!-- Perfil -->
     <div class="section-block">
       <div class="section-title">👤 Sua situação atual</div>
+      <p style="color:var(--cinza-400);font-size:12px;margin-bottom:16px;">Quanto mais detalhes, mais valor seu teste tem para validar a ferramenta — não tenha receio de citar nomes de clubes ou atletas.</p>
       <div class="form-grid">
         <div class="form-group">
           <label class="form-label">Nome (opcional)</label>
           <input class="form-input" id="fb-nome" placeholder="Seu nome">
         </div>
         <div class="form-group">
-          <label class="form-label">Situação</label>
+          <label class="form-label">Contato (opcional)</label>
+          <input class="form-input" id="fb-contato" placeholder="WhatsApp ou e-mail">
+        </div>
+        <div class="form-group form-full">
+          <label class="form-label">Sua situação</label>
           <div class="perfil-chips" id="fb-situacao-chips">
-            <div class="perfil-chip" onclick="selChipGroup(this,'fb-situacao-chips','fb-situacao')">Analista em clube</div>
-            <div class="perfil-chip" onclick="selChipGroup(this,'fb-situacao-chips','fb-situacao')">Em formação</div>
-            <div class="perfil-chip" onclick="selChipGroup(this,'fb-situacao-chips','fb-situacao')">Comissão técnica</div>
-            <div class="perfil-chip" onclick="selChipGroup(this,'fb-situacao-chips','fb-situacao')">Estudante / entusiasta</div>
+            <div class="perfil-chip" onclick="selSituacao(this,'Trabalho em clube')">Trabalho em clube</div>
+            <div class="perfil-chip" onclick="selSituacao(this,'Trabalho com atleta(s) individualmente')">Atleta(s) individualmente</div>
+            <div class="perfil-chip" onclick="selSituacao(this,'Comissão técnica')">Comissão técnica</div>
+            <div class="perfil-chip" onclick="selSituacao(this,'Em formação')">Em formação</div>
+            <div class="perfil-chip" onclick="selSituacao(this,'Estudante / entusiasta')">Estudante / entusiasta</div>
           </div>
           <input type="hidden" id="fb-situacao">
+        </div>
+      </div>
+
+      <!-- Bloco condicional: trabalha em clube -->
+      <div class="hidden" id="fb-bloco-clube" style="margin-top:4px;">
+        <hr class="divider" style="margin:18px 0;">
+        <div style="font-size:11px;font-weight:600;color:var(--verde);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:12px;">🏟️ Dados do clube</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Nome do clube</label>
+            <input class="form-input" id="fb-clube-nome" placeholder="Ex: Atlético Mineiro">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Sua função no clube</label>
+            <input class="form-input" id="fb-clube-funcao" placeholder="Ex: Analista de desempenho, Coordenador">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Categoria que atende</label>
+            <select class="form-select" id="fb-clube-categoria">
+              <option value="">Selecione...</option>
+              <option>Profissional</option>
+              <option>Sub-23</option>
+              <option>Sub-20</option>
+              <option>Sub-17</option>
+              <option>Sub-15</option>
+              <option>Base (múltiplas categorias)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Competição que disputa</label>
+            <input class="form-input" id="fb-clube-competicao" placeholder="Ex: Brasileirão Série A, Campeonato Mineiro">
+          </div>
+        </div>
+      </div>
+
+      <!-- Bloco condicional: trabalha com atleta individual -->
+      <div class="hidden" id="fb-bloco-atleta" style="margin-top:4px;">
+        <hr class="divider" style="margin:18px 0;">
+        <div style="font-size:11px;font-weight:600;color:var(--verde);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:12px;">⚽ Dados do(s) atleta(s) atendido(s)</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Nome do(s) atleta(s)</label>
+            <input class="form-input" id="fb-atleta-nome" placeholder="Pode listar mais de um, separado por vírgula">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Posição</label>
+            <input class="form-input" id="fb-atleta-posicao" placeholder="Ex: Volante, Centroavante">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Clube atual do atleta</label>
+            <input class="form-input" id="fb-atleta-clube" placeholder="Em qual clube o atleta joga hoje">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Categoria / Nível</label>
+            <select class="form-select" id="fb-atleta-categoria">
+              <option value="">Selecione...</option>
+              <option>Profissional — Série A</option>
+              <option>Profissional — Série B</option>
+              <option>Profissional — Série C/D</option>
+              <option>Profissional — Estadual</option>
+              <option>Sub-23</option>
+              <option>Sub-20</option>
+              <option>Sub-17</option>
+              <option>Sub-15</option>
+            </select>
+          </div>
+          <div class="form-group form-full">
+            <label class="form-label">Competição que disputa</label>
+            <input class="form-input" id="fb-atleta-competicao" placeholder="Ex: Campeonato Brasileiro, Copa do Brasil, torneio estadual">
+          </div>
         </div>
       </div>
     </div>
@@ -1739,6 +1815,22 @@ Use terminologia técnica do futebol brasileiro. Tom profissional de relatório 
   }
 }
 // ============ FEEDBACK ============
+function selSituacao(el, val) {
+  document.querySelectorAll('#fb-situacao-chips .perfil-chip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('fb-situacao').value = val;
+
+  document.getElementById('fb-bloco-clube').classList.add('hidden');
+  document.getElementById('fb-bloco-atleta').classList.add('hidden');
+
+  if(val === 'Trabalho em clube' || val === 'Comissão técnica') {
+    document.getElementById('fb-bloco-clube').classList.remove('hidden');
+  }
+  if(val === 'Trabalho com atleta(s) individualmente') {
+    document.getElementById('fb-bloco-atleta').classList.remove('hidden');
+  }
+}
+
 function selChipGroup(el, groupId, hiddenId) {
   document.querySelectorAll('#'+groupId+' .perfil-chip').forEach(c => c.classList.remove('sel'));
   el.classList.add('sel');
@@ -1780,7 +1872,33 @@ POTENCIAL SPORTS — FEEDBACK DE ANALISTA
 `;
   txt += linha('Data', new Date().toLocaleDateString('pt-BR'));
   txt += linha('Nome', v('fb-nome') || 'Anônimo');
+  txt += linha('Contato', v('fb-contato'));
   txt += linha('Situação', v('fb-situacao'));
+
+  if(v('fb-situacao') === 'Trabalho em clube' || v('fb-situacao') === 'Comissão técnica') {
+    txt += `
+── DADOS DO CLUBE ──────────────────────────
+`;
+    txt += linha('Clube', v('fb-clube-nome'));
+    txt += linha('Função no clube', v('fb-clube-funcao'));
+    txt += linha('Categoria', v('fb-clube-categoria'));
+    txt += linha('Competição', v('fb-clube-competicao'));
+  }
+
+  if(v('fb-situacao') === 'Trabalho com atleta(s) individualmente') {
+    txt += `
+── DADOS DO(S) ATLETA(S) ───────────────────
+`;
+    txt += linha('Atleta(s)', v('fb-atleta-nome'));
+    txt += linha('Posição', v('fb-atleta-posicao'));
+    txt += linha('Clube do atleta', v('fb-atleta-clube'));
+    txt += linha('Categoria / Nível', v('fb-atleta-categoria'));
+    txt += linha('Competição', v('fb-atleta-competicao'));
+  }
+
+  txt += `
+── EXPERIÊNCIA DE USO ──────────────────────
+`;
   txt += linha('Facilidade de uso', v('fb-facilidade') ? v('fb-facilidade')+'/5' : null);
   txt += linha('Módulo destaque', v('fb-modulo'));
   txt += linha('O que faltou', getFaltouChips());
