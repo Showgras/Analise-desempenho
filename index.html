@@ -391,62 +391,6 @@
 
   .howto-text { font-size: 12px; color: var(--branco); line-height: 1.5; }
 
-  /* IA EMBUTIDA */
-  .ia-box {
-    background: var(--cinza-900);
-    border: 1px solid var(--verde);
-    border-radius: 12px;
-    padding: 20px;
-    margin-top: 20px;
-  }
-
-  .ia-box-title {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--verde);
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .ia-result {
-    background: var(--cinza-800);
-    border-radius: 8px;
-    padding: 16px;
-    font-size: 13px;
-    color: var(--cinza-100);
-    line-height: 1.8;
-    white-space: pre-wrap;
-    min-height: 80px;
-    max-height: 500px;
-    overflow-y: auto;
-  }
-
-  .ia-loading {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: var(--verde);
-    font-size: 13px;
-  }
-
-  .dot-pulse { display: flex; gap: 4px; }
-  .dot-pulse span {
-    width: 6px; height: 6px;
-    background: var(--verde);
-    border-radius: 50%;
-    animation: pulse 1.2s ease-in-out infinite;
-  }
-  .dot-pulse span:nth-child(2) { animation-delay: 0.2s; }
-  .dot-pulse span:nth-child(3) { animation-delay: 0.4s; }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 0.3; transform: scale(0.8); }
-    50% { opacity: 1; transform: scale(1); }
-  }
-
   /* TOAST */
   .toast {
     position: fixed;
@@ -721,7 +665,6 @@
   </button>
   <button class="main-tab" onclick="switchMainTab('prospeccao', this)">
     <span class="tab-icon">🔍</span> Prospecção de Atletas
-    <span style="font-size:9px;background:var(--verde);color:var(--preto);padding:2px 6px;border-radius:10px;font-weight:700;margin-left:2px;">IA</span>
   </button>
   <button class="main-tab" onclick="switchMainTab('feedback', this)">
     <span class="tab-icon">💬</span> Feedback
@@ -768,7 +711,7 @@
       <button class="sidebar-btn" onclick="scrollTo('s-prosp-pos')"><span class="s-icon">📍</span> Posição e sistema</button>
       <button class="sidebar-btn" onclick="scrollTo('s-prosp-metricas')"><span class="s-icon">📈</span> Dados de desempenho</button>
       <button class="sidebar-btn" onclick="scrollTo('s-prosp-contexto')"><span class="s-icon">🌍</span> Contexto</button>
-      <button class="sidebar-btn" onclick="scrollTo('s-prosp-ia')"><span class="s-icon">🤖</span> Análise IA</button>
+      <button class="sidebar-btn" onclick="scrollTo('s-prosp-ia')"><span class="s-icon">📤</span> Gerar texto</button>
     </div>
   </div>
 
@@ -1147,14 +1090,14 @@
 
     <div class="page-header">
       <div class="page-title">Prospecção de Atletas</div>
-      <div class="page-subtitle">Análise completa com IA embutida — sem precisar copiar para o Claude.</div>
+      <div class="page-subtitle">Preencha os dados, gere o texto e cole no Claude para o parecer de prospecção.</div>
     </div>
 
     <div class="howto">
       <div class="howto-step"><div class="howto-num">1</div><div class="howto-text">Preencha o perfil do atleta</div></div>
       <div class="howto-step"><div class="howto-num">2</div><div class="howto-text">Descreva o contexto e dados</div></div>
-      <div class="howto-step"><div class="howto-num">3</div><div class="howto-text">Clique em <strong>Analisar com IA</strong></div></div>
-      <div class="howto-step"><div class="howto-num">4</div><div class="howto-text">Receba o parecer de prospecção</div></div>
+      <div class="howto-step"><div class="howto-num">3</div><div class="howto-text">Clique em <strong>Gerar texto para IA</strong></div></div>
+      <div class="howto-step"><div class="howto-num">4</div><div class="howto-text">Copie e cole no <strong>Claude</strong></div></div>
     </div>
 
     <!-- Perfil -->
@@ -1258,18 +1201,16 @@
       </div>
     </div>
 
-    <!-- IA embutida -->
+    <!-- Output prospecção -->
     <div class="section-block" id="s-prosp-ia">
-      <div class="section-title">🤖 Análise com IA</div>
-      <p style="color:var(--cinza-200);font-size:13px;margin-bottom:16px;">A IA vai gerar um parecer completo de prospecção com base nos dados preenchidos — adequação ao sistema, potencial, riscos e recomendação final.</p>
+      <div class="section-title">📤 Parecer para IA</div>
+      <p style="color:var(--cinza-200);font-size:13px;margin-bottom:16px;">Gere o texto com todos os dados preenchidos e cole no Claude para receber o parecer completo de prospecção.</p>
       <div class="btn-row" style="margin-bottom:16px;">
-        <button class="btn btn-primary" onclick="analisarProscpeccao()">🤖 Analisar com IA</button>
-        <button class="btn btn-ghost" onclick="copiarIA()">📋 Copiar resultado</button>
+        <button class="btn btn-primary" onclick="gerarTextoProspeccao()">⚡ Gerar texto para IA</button>
+        <button class="btn btn-secondary" onclick="copiarTexto('output-prospeccao')">📋 Copiar texto</button>
+        <button class="btn btn-ghost" onclick="baixarTxt('output-prospeccao','parecer-prospeccao')">⬇ Baixar .txt</button>
       </div>
-      <div class="ia-box" id="ia-box">
-        <div class="ia-box-title">🤖 Parecer de Prospecção — Potencial Sports</div>
-        <div class="ia-result" id="ia-result"><span style="color:var(--cinza-400);font-style:italic;">Preencha os dados e clique em "Analisar com IA" para gerar o parecer.</span></div>
-      </div>
+      <div class="output-box" id="output-prospeccao"><span class="output-empty">Preencha os dados e clique em "Gerar texto para IA" para montar o parecer.</span></div>
     </div>
 
   </div><!-- fim tab-prospeccao -->
@@ -1670,13 +1611,6 @@ function copiarTexto(id) {
   navigator.clipboard.writeText(txt).then(() => showToast('✓ Copiado! Cole no Claude.'));
 }
 
-function copiarIA() {
-  const el = document.getElementById('ia-result');
-  const txt = el.innerText || el.textContent;
-  if(!txt || txt.includes('Preencha os dados')) { showToast('⚠ Gere a análise primeiro.'); return; }
-  navigator.clipboard.writeText(txt).then(() => showToast('✓ Análise copiada!'));
-}
-
 function baixarTxt(id, nome) {
   const txt = document.getElementById(id).innerText;
   const blob = new Blob([txt], {type:'text/plain'});
@@ -1925,13 +1859,8 @@ Marca: Potencial Sports.
   showToast('✓ Texto gerado! Copie e cole no Claude.');
 }
 
-// ============ ANÁLISE IA — PROSPECÇÃO ============
-async function analisarProscpeccao() {
-  const nome = v('p-nome') || 'Atleta';
-  const resultEl = document.getElementById('ia-result');
-
-  resultEl.innerHTML = `<div class="ia-loading"><div class="dot-pulse"><span></span><span></span><span></span></div> Analisando ${nome}...</div>`;
-
+// ============ GERAR TEXTO — PROSPECÇÃO ============
+function gerarTextoProspeccao() {
   const prompt = `Você é um scout e analista de desempenho sênior da Potencial Sports, especializado em prospecção de atletas no futebol brasileiro.
 
 Analise o atleta abaixo e gere um PARECER DE PROSPECÇÃO completo e profissional.
@@ -1987,24 +1916,12 @@ Gere um PARECER DE PROSPECÇÃO com:
    👁 MONITORAR (reavaliar em X meses)
    ❌ NÃO RECOMENDAR
 
-Use terminologia técnica do futebol brasileiro. Tom profissional de relatório de scout.`;
+Use terminologia técnica do futebol brasileiro. Tom profissional de relatório de scout.
+Marca: Potencial Sports.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
 
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 1000,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
-    const data = await res.json();
-    const texto = data.content?.[0]?.text || 'Erro ao obter resposta.';
-    resultEl.textContent = texto;
-  } catch(err) {
-    resultEl.textContent = '⚠ Erro de conexão. Verifique sua internet e tente novamente.\n\n' + err.message;
-  }
+  document.getElementById('output-prospeccao').textContent = prompt;
+  showToast('✓ Texto gerado! Copie e cole no Claude.');
 }
 // ============ FEEDBACK ============
 function selSituacao(el, val) {
