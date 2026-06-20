@@ -574,9 +574,131 @@
 
   /* HIDDEN */
   .hidden { display: none !important; }
+
+  /* LOGIN */
+  #login-screen {
+    position: fixed;
+    inset: 0;
+    background: var(--preto);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+  }
+  .login-card {
+    background: var(--cinza-900);
+    border: 1px solid var(--cinza-700);
+    border-radius: 16px;
+    padding: 40px 36px;
+    max-width: 380px;
+    width: 100%;
+  }
+  .login-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--branco);
+    margin-bottom: 6px;
+    justify-content: center;
+  }
+  .login-logo span { color: var(--verde); }
+  .login-sub {
+    text-align: center;
+    color: var(--cinza-400);
+    font-size: 12px;
+    margin-bottom: 28px;
+  }
+  .login-field { margin-bottom: 14px; }
+  .login-field label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--cinza-200);
+    display: block;
+    margin-bottom: 6px;
+  }
+  .login-field input {
+    width: 100%;
+    background: var(--cinza-800);
+    border: 1px solid var(--cinza-600);
+    border-radius: 8px;
+    color: var(--branco);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    padding: 11px 13px;
+  }
+  .login-field input:focus { outline: none; border-color: var(--verde); }
+  .login-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    background: var(--verde);
+    color: var(--preto);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 6px;
+  }
+  .login-btn:hover { background: var(--verde-escuro); color: #fff; }
+  .login-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .login-error {
+    background: #FF444422;
+    border: 1px solid var(--erro);
+    color: var(--erro);
+    font-size: 12px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin-bottom: 14px;
+    display: none;
+  }
+  .login-footer {
+    text-align: center;
+    font-size: 11px;
+    color: var(--cinza-400);
+    margin-top: 20px;
+  }
+  .logout-btn {
+    background: none;
+    border: 1px solid var(--cinza-600);
+    color: var(--cinza-200);
+    font-size: 11px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .logout-btn:hover { border-color: var(--erro); color: var(--erro); }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
+
+<!-- TELA DE LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo"><div class="logo-mark" style="width:28px;height:28px;font-size:14px;">P</div>Potencial <span>Sports</span></div>
+    <div class="login-sub">Acesso exclusivo para analistas convidados</div>
+
+    <div class="login-error" id="login-error"></div>
+
+    <div class="login-field">
+      <label>E-mail</label>
+      <input type="email" id="login-email" placeholder="seu@email.com" autocomplete="username">
+    </div>
+    <div class="login-field">
+      <label>Senha</label>
+      <input type="password" id="login-senha" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="login-btn" id="login-btn" onclick="fazerLogin()">Entrar</button>
+
+    <div class="login-footer">Não tem acesso? Solicite um convite ao responsável pela ferramenta.</div>
+  </div>
+</div>
 
 <header>
   <div class="logo">
@@ -584,7 +706,10 @@
     Potencial <span>Sports</span>
     <span class="badge-version">v1.2</span>
   </div>
-  <div style="font-size:11px;color:var(--cinza-400);">potencialsports.com.br</div>
+  <div style="display:flex;align-items:center;gap:14px;">
+    <span style="font-size:11px;color:var(--cinza-400);" id="user-email-display"></span>
+    <button class="logout-btn" onclick="fazerLogout()">Sair</button>
+  </div>
 </header>
 
 <div class="main-tabs">
@@ -1359,7 +1484,74 @@
 <div class="toast" id="toast">✓ Copiado com sucesso!</div>
 
 <script>
-// ============ NAVEGAÇÃO ============
+// ============ AUTENTICAÇÃO SUPABASE ============
+const SUPABASE_URL = 'https://mublmwtqxdcszcmvmquq.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_PKXrAdb9U6JIoxSJmtk6Jw_s5Q3yYRr';
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+async function verificarSessao() {
+  const { data } = await supabaseClient.auth.getSession();
+  if (data.session) {
+    mostrarApp(data.session.user);
+  } else {
+    mostrarLogin();
+  }
+}
+
+function mostrarApp(user) {
+  document.getElementById('login-screen').classList.add('hidden');
+  document.getElementById('user-email-display').textContent = user.email;
+}
+
+function mostrarLogin() {
+  document.getElementById('login-screen').classList.remove('hidden');
+}
+
+async function fazerLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const senha = document.getElementById('login-senha').value;
+  const btn = document.getElementById('login-btn');
+  const erroBox = document.getElementById('login-error');
+
+  erroBox.style.display = 'none';
+
+  if (!email || !senha) {
+    erroBox.textContent = 'Preencha e-mail e senha.';
+    erroBox.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Entrando...';
+
+  const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: senha });
+
+  btn.disabled = false;
+  btn.textContent = 'Entrar';
+
+  if (error) {
+    erroBox.textContent = 'E-mail ou senha incorretos, ou seu acesso ainda não foi liberado.';
+    erroBox.style.display = 'block';
+    return;
+  }
+
+  mostrarApp(data.user);
+}
+
+async function fazerLogout() {
+  await supabaseClient.auth.signOut();
+  document.getElementById('login-email').value = '';
+  document.getElementById('login-senha').value = '';
+  mostrarLogin();
+}
+
+document.getElementById('login-senha')?.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') fazerLogin();
+});
+
+verificarSessao();
+
+
 function switchMainTab(tab, btn) {
   ['atleta','clube','prospeccao','feedback'].forEach(t => {
     document.getElementById('tab-'+t).classList.add('hidden');
