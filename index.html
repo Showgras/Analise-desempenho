@@ -242,7 +242,8 @@ canvas.rc{width:100%;max-width:320px;display:block;margin:0 auto;}
     <div class="sbl">Seções</div>
     <button class="sbb active" onclick="gt('sa-dados')"><span class="si">👤</span>Dados pessoais</button>
     <button class="sbb" onclick="gt('sa-per')"><span class="si">📅</span>Período</button>
-    <button class="sbb" onclick="gt('sa-met')"><span class="si">⚙️</span>Métricas</button>
+    <button class="sbb" onclick="gt('sa-met')"><span class="si">⚙️</span>Métricas por posição</button>
+    <button class="sbb" onclick="gt('sa-gps')"><span class="si">🏃</span>Métricas GPS</button>
     <button class="sbb" onclick="gt('sa-obs')"><span class="si">📝</span>Observações</button>
     <button class="sbb" onclick="gt('sa-ia')"><span class="si">🤖</span>Análise + Radar</button>
   </div>
@@ -357,6 +358,22 @@ canvas.rc{width:100%;max-width:320px;display:block;margin:0 auto;}
     <div class="stitle">⚙️ Métricas <span id="a-met-pos" style="color:var(--c4);font-weight:400;text-transform:none;letter-spacing:0;font-size:12px;margin-left:4px;">— selecione a posição para ver as métricas</span></div>
     <div id="a-met-campos">
       <div class="ibanner">Selecione a <strong>posição</strong> na seção de dados pessoais para carregar as métricas específicas desta posição.</div>
+    </div>
+  </div>
+
+  <!-- GPS FIXO — aparece sempre independente da posição -->
+  <div class="sblk" id="sa-gps">
+    <div class="stitle">🏃 Métricas físicas — GPS <span style="color:var(--c4);font-weight:400;text-transform:none;letter-spacing:0;font-size:12px;margin-left:4px;">universal para todas as posições</span></div>
+    <div class="fg3">
+      <div class="fgrp"><label class="flbl">Distância total (km) <i class="tip-icon">?<span class="tip-box">Total percorrido no período. Ex: 11.2 para uma partida. Laterais e volantes costumam ter os maiores volumes.</span></i></label><input class="finp" id="gps-dist" type="number" step="0.1" placeholder="0.0"></div>
+      <div class="fgrp"><label class="flbl">Alta intensidade (km) <i class="tip-icon">?<span class="tip-box">Metros acima de 19-21 km/h dependendo da plataforma GPS. Indica o volume de esforço intenso.</span></i></label><input class="finp" id="gps-ai" type="number" step="0.1" placeholder="0.0"></div>
+      <div class="fgrp"><label class="flbl">Distância sprint (km) <i class="tip-icon">?<span class="tip-box">Metros acima de 25 km/h. Indica esforços máximos de aceleração.</span></i></label><input class="finp" id="gps-sp" type="number" step="0.1" placeholder="0.0"></div>
+      <div class="fgrp"><label class="flbl">Número de sprints <i class="tip-icon">?<span class="tip-box">Quantidade de esforços máximos. Cruzar com distância de sprint para ver a qualidade de cada esforço.</span></i></label><input class="finp" id="gps-nspr" type="number" placeholder="0"></div>
+      <div class="fgrp"><label class="flbl">Vel. máxima (km/h) <i class="tip-icon">?<span class="tip-box">Pico de velocidade atingido no período. Ex: 33.4. Dado individual mais comparado entre atletas da mesma posição.</span></i></label><input class="finp" id="gps-vel" type="number" step="0.1" placeholder="0.0"></div>
+      <div class="fgrp"><label class="flbl">Acelerações <i class="tip-icon">?<span class="tip-box">Número de acelerações acima do limiar definido pela plataforma (geralmente acima de 3 m/s²). Indica carga neuromuscular.</span></i></label><input class="finp" id="gps-acel" type="number" placeholder="0"></div>
+      <div class="fgrp"><label class="flbl">Desacelerações <i class="tip-icon">?<span class="tip-box">Número de freadas bruscas. Junto com acelerações, indica carga total sobre articulações e músculos.</span></i></label><input class="finp" id="gps-desacel" type="number" placeholder="0"></div>
+      <div class="fgrp"><label class="flbl">Carga treino (PSE) <i class="tip-icon">?<span class="tip-box">Percepção Subjetiva de Esforço × duração. Ex: PSE 7 × 90min = 630. Indica fadiga acumulada no período.</span></i></label><input class="finp" id="gps-pse" type="number" placeholder="0"></div>
+      <div class="fgrp"><label class="flbl">FC média (% FC máx) <i class="tip-icon">?<span class="tip-box">Frequência cardíaca média como percentual da FC máxima do atleta. Ex: 82 significa que jogou em média a 82% da FC máxima.</span></i></label><input class="finp" id="gps-fc" type="number" placeholder="0"></div>
     </div>
   </div>
 
@@ -958,15 +975,18 @@ function onPosAtleta(){
 }
 
 function coletarMetricasAtleta(){
-  const pos=v('a-pos');
-  if(!pos||!METRICAS[pos])return{};
+  const pos=v("a-pos");
   const dados={};
-  METRICAS[pos].grupos.forEach(g=>{
-    g.campos.forEach(c=>{
-      const val=v(c.id);
-      if(val)dados[c.label]=val;
+  if(pos&&METRICAS[pos]){
+    METRICAS[pos].grupos.forEach(g=>{
+      g.campos.forEach(c=>{
+        const val=v(c.id);
+        if(val)dados[c.label]=val;
+      });
     });
-  });
+  }
+  const gps={"Distância total (km)":v("gps-dist")||null,"Alta intensidade (km)":v("gps-ai")||null,"Sprint (km)":v("gps-sp")||null,"Número de sprints":v("gps-nspr")||null,"Velocidade máxima (km/h)":v("gps-vel")||null,"Acelerações":v("gps-acel")||null,"Desacelerações":v("gps-desacel")||null,"Carga PSE":v("gps-pse")||null,"FC média (% FCmáx)":v("gps-fc")||null};
+  Object.entries(gps).forEach(([k,vl])=>{if(vl)dados[k]=vl;});
   return dados;
 }
 
