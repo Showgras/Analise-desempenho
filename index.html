@@ -212,6 +212,38 @@ canvas.rc{width:100%;max-width:320px;display:block;margin:0 auto;}
 .msel{padding:5px 12px;border-radius:20px;border:1px solid var(--c6);background:none;color:var(--c2);font-size:11px;cursor:pointer;transition:all .15s;}
 .msel.active{background:var(--verde);border-color:var(--verde);color:var(--p);font-weight:600;}
 
+
+/* ALERTA DE LESÃO */
+.risco-card{border-radius:12px;padding:16px 20px;margin-bottom:16px;border:2px solid transparent;transition:all .3s;}
+.risco-baixo{background:#00C85312;border-color:#00C853;}
+.risco-medio{background:#FFB30012;border-color:#FFB300;}
+.risco-alto{background:#FF444412;border-color:#FF4444;}
+.risco-critico{background:#FF000018;border-color:#FF0000;animation:pulse-border 1.5s ease-in-out infinite;}
+@keyframes pulse-border{0%,100%{box-shadow:0 0 0 0 rgba(255,0,0,0.2);}50%{box-shadow:0 0 0 6px rgba(255,0,0,0);}}
+.risco-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.risco-badge{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700;letter-spacing:.5px;}
+.rb-baixo{background:#00C853;color:#000;}
+.rb-medio{background:#FFB300;color:#000;}
+.rb-alto{background:#FF4444;color:#fff;}
+.rb-critico{background:#FF0000;color:#fff;}
+.risco-nome{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;color:var(--b);}
+.risco-fatores{display:flex;flex-direction:column;gap:6px;margin-top:10px;}
+.risco-fator{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--c2);line-height:1.5;}
+.risco-fator-icon{font-size:13px;flex-shrink:0;margin-top:1px;}
+.risco-rec{font-size:12px;color:var(--b);margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.08);line-height:1.6;}
+.risco-score-bar{display:flex;align-items:center;gap:10px;margin-top:8px;}
+.risco-score-track{flex:1;background:var(--c7);border-radius:4px;height:8px;overflow:hidden;}
+.risco-score-fill{height:100%;border-radius:4px;transition:width .6s ease;}
+.risco-score-num{font-size:13px;font-weight:700;min-width:36px;text-align:right;}
+.painel-atleta{background:var(--c8);border:1px solid var(--c7);border-radius:10px;padding:14px 18px;margin-bottom:10px;cursor:default;transition:all .2s;}
+.painel-atleta:hover{border-color:var(--c6);}
+.pa-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.pa-nome{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;color:var(--b);}
+.pa-data{font-size:11px;color:var(--c4);}
+.pa-fatores{font-size:11px;color:var(--c4);line-height:1.6;}
+.aler-inline{background:var(--c9);border:1px solid var(--c7);border-radius:12px;padding:20px;margin-top:16px;}
+.aler-title{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;color:var(--verde);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+
 .toast{position:fixed;bottom:28px;right:28px;background:var(--verde);color:var(--p);font-weight:600;font-size:13px;padding:12px 20px;border-radius:8px;z-index:999;opacity:0;transform:translateY(10px);transition:all .3s;pointer-events:none;}
 .toast.show{opacity:1;transform:translateY(0);}
 .hidden{display:none!important;}
@@ -258,6 +290,7 @@ canvas.rc{width:100%;max-width:320px;display:block;margin:0 auto;}
   <button class="mtab" onclick="swTab('clube',this)">🏟️ Clube</button>
   <button class="mtab" onclick="swTab('prosp',this)">🔍 Prospecção <span class="tbdg">IA</span></button>
   <button class="mtab" onclick="swTab('hist',this)">📂 Histórico</button>
+  <button class="mtab" id="tab-lesao-btn" onclick="swTab('lesao',this)" style="display:none;">🚨 Risco de Lesão</button>
   <button class="mtab" id="tab-fb-btn" onclick="swTab('feedback',this)" style="display:none;">📊 Feedback</button>
 </div>
 
@@ -313,6 +346,15 @@ canvas.rc{width:100%;max-width:320px;display:block;margin:0 auto;}
   </div>
 </div>
 
+
+<!-- SB LESÃO -->
+<div class="sidebar hidden" id="sb-lesao">
+  <div class="sbs">
+    <div class="sbl">Visão</div>
+    <button class="sbb active" onclick="gt('lesao-painel')"><span class="si">📊</span>Painel geral</button>
+    <button class="sbb" onclick="gt('lesao-config')"><span class="si">⚙️</span>Limiares</button>
+  </div>
+</div>
 <!-- SB FEEDBACK -->
 <div class="sidebar hidden" id="sb-feedback">
   <div class="sbs">
@@ -399,7 +441,7 @@ canvas.rc{width:100%;max-width:320px;display:block;margin:0 auto;}
       <div class="fgrp"><label class="flbl">Vel. máxima (km/h) <i class="tip-icon">?<span class="tip-box">Pico de velocidade atingido no período. Ex: 33.4. Dado individual mais comparado entre atletas da mesma posição.</span></i></label><input class="finp" id="gps-vel" type="number" step="0.1" placeholder="0.0"></div>
       <div class="fgrp"><label class="flbl">Acelerações <i class="tip-icon">?<span class="tip-box">Número de acelerações acima do limiar definido pela plataforma (geralmente acima de 3 m/s²). Indica carga neuromuscular.</span></i></label><input class="finp" id="gps-acel" type="number" placeholder="0"></div>
       <div class="fgrp"><label class="flbl">Desacelerações <i class="tip-icon">?<span class="tip-box">Número de freadas bruscas. Junto com acelerações, indica carga total sobre articulações e músculos.</span></i></label><input class="finp" id="gps-desacel" type="number" placeholder="0"></div>
-      <div class="fgrp"><label class="flbl">Carga treino (PSE) <i class="tip-icon">?<span class="tip-box">Percepção Subjetiva de Esforço × duração. Ex: PSE 7 × 90min = 630. Indica fadiga acumulada no período.</span></i></label><input class="finp" id="gps-pse" type="number" placeholder="0"></div>
+      <div class="fgrp"><label class="flbl">Carga treino (PSE) <i class="tip-icon">?<span class="tip-box">Percepção Subjetiva de Esforço × duração. Ex: PSE 7 × 90min = 630. Indica fadiga acumulada no período.</span></i></label><input class="finp" id="gps-pse" type="number" placeholder="0" oninput="autoRisco()"></div>
       <div class="fgrp"><label class="flbl">FC média (% FC máx) <i class="tip-icon">?<span class="tip-box">Frequência cardíaca média como percentual da FC máxima do atleta. Ex: 82 significa que jogou em média a 82% da FC máxima.</span></i></label><input class="finp" id="gps-fc" type="number" placeholder="0"></div>
     </div>
   </div>
@@ -417,6 +459,17 @@ canvas.rc{width:100%;max-width:320px;display:block;margin:0 auto;}
         <input type="range" min="0" max="100" value="70" id="a-sc" oninput="document.getElementById('a-scd').textContent=this.value">
         <span style="color:var(--c4);font-size:12px;">/ 100</span>
       </div>
+    </div>
+  </div>
+
+
+  <!-- ALERTA DE LESÃO INLINE -->
+  <div class="sblk" id="sa-alerta" style="display:none;">
+    <div class="stitle">🚨 Monitor de risco de lesão</div>
+    <p style="color:var(--c2);font-size:13px;margin-bottom:14px;">Calculado com base nos dados GPS, PSE, histórico de lesões e variação em relação ao período anterior.</p>
+    <div id="alerta-inline-result"></div>
+    <div class="btn" style="margin-top:12px;">
+      <button class="btn bp" onclick="calcularRisco()" style="font-size:12px;padding:8px 16px;">🔄 Recalcular risco</button>
     </div>
   </div>
 
@@ -641,6 +694,31 @@ canvas.rc{width:100%;max-width:320px;display:block;margin:0 auto;}
     </select>
   </div>
   <div id="hlista"></div>
+</div>
+
+
+<!-- ===== ABA LESÃO ===== -->
+<div class="mc hidden" id="tab-lesao">
+  <div class="ph"><div class="pt">Monitor de Risco de Lesão</div><div class="ps">Visão coletiva do risco físico de todos os atletas registrados.</div></div>
+
+  <div class="sblk" id="lesao-config">
+    <div class="stitle">⚙️ Limiares de alerta</div>
+    <p style="color:var(--c2);font-size:13px;margin-bottom:16px;">Configure os limites que disparam os alertas. Baseados em referências da literatura científica de ciência do esporte.</p>
+    <div class="fg3">
+      <div class="fgrp"><label class="flbl">PSE máximo (semana) <i class="tip-icon">?<span class="tip-box">Acima deste valor, o sistema sinaliza sobrecarga. Referência: 3500 UA/semana para atletas profissionais.</span></i></label><input class="finp" id="lim-pse" type="number" value="3500" placeholder="3500"></div>
+      <div class="fgrp"><label class="flbl">Variação de carga máx (%) <i class="tip-icon">?<span class="tip-box">Aumento acima deste % em relação à semana anterior indica risco. Referência: 15% (modelo ACWR).</span></i></label><input class="finp" id="lim-var" type="number" value="15" placeholder="15"></div>
+      <div class="fgrp"><label class="flbl">Dist. alta intens. máx (km) <i class="tip-icon">?<span class="tip-box">Acima deste volume em alta intensidade por semana, o risco aumenta.</span></i></label><input class="finp" id="lim-ai" type="number" value="4" placeholder="4"></div>
+      <div class="fgrp"><label class="flbl">Acelerações máx/jogo <i class="tip-icon">?<span class="tip-box">Número de acelerações acima do qual o sistema sinaliza sobrecarga neuromuscular.</span></i></label><input class="finp" id="lim-acel" type="number" value="80" placeholder="80"></div>
+      <div class="fgrp"><label class="flbl">Sprints máx/jogo <i class="tip-icon">?<span class="tip-box">Volume de sprints por partida acima do qual o sistema emite alerta.</span></i></label><input class="finp" id="lim-spr" type="number" value="30" placeholder="30"></div>
+    </div>
+    <button class="btn bp" style="font-size:12px;padding:8px 16px;" onclick="carregarPainelLesao()">✓ Aplicar e recalcular</button>
+  </div>
+
+  <div id="lesao-painel" style="margin-top:20px;">
+    <div class="stitle" style="margin-bottom:16px;">📋 Status atual de todos os atletas</div>
+    <div id="lesao-lista"><div class="hemp"><div style="font-size:48px;margin-bottom:12px;">🏃</div><div>Clique em "Calcular" para carregar o painel.</div></div></div>
+    <div style="margin-top:16px;"><button class="btn bp" onclick="carregarPainelLesao()">🔄 Calcular risco de todos os atletas</button></div>
+  </div>
 </div>
 
 <!-- ===== ABA FEEDBACK (só criador) ===== -->
@@ -989,6 +1067,9 @@ function startApp(u){
   document.getElementById('app-sc').classList.remove('hidden');
   document.getElementById('uem').textContent=u.email;
   if(u.email===ADMIN_EMAIL)document.getElementById('tab-fb-btn').style.display='flex';
+  document.getElementById('tab-lesao-btn').style.display='flex';
+  // Adicionar botão sidebar lesão
+  mostrarAbaLesao();
   loadHist();
 }
 async function logout(){await supa.auth.signOut();location.reload();}
@@ -996,7 +1077,7 @@ supa.auth.getSession().then(({data})=>{if(data.session)startApp(data.session.use
 
 // ===== NAV =====
 function swTab(t,btn){
-  ['atleta','clube','prosp','hist','feedback'].forEach(x=>{
+  ['atleta','clube','prosp','hist','feedback','lesao'].forEach(x=>{
     const el=document.getElementById('tab-'+x);if(el)el.classList.add('hidden');
     const sb=document.getElementById('sb-'+x);if(sb)sb.classList.add('hidden');
   });
@@ -1291,6 +1372,224 @@ async function delRel(){
   todosR=todosR.filter(r=>r.id!==cRid);fModal();renderHist();showToast('Excluído.');
 }
 
+
+
+// ===== SISTEMA DE ALERTA DE LESÃO =====
+
+function getLimiares(){
+  return {
+    pse: parseFloat(document.getElementById('lim-pse')?.value)||3500,
+    var: parseFloat(document.getElementById('lim-var')?.value)||15,
+    ai:  parseFloat(document.getElementById('lim-ai')?.value)||4,
+    acel:parseFloat(document.getElementById('lim-acel')?.value)||80,
+    spr: parseFloat(document.getElementById('lim-spr')?.value)||30,
+  };
+}
+
+function calcularRiscoAtleta(relAtual, relAnterior, historicoCarga){
+  const L = getLimiares();
+  const d = relAtual.dados || {};
+  const m = d.metricas || {};
+  const fatores = [];
+  let score = 0;
+
+  // 1. PSE
+  const pse = parseFloat(m['Carga PSE'] || m['gps-pse'] || 0);
+  if(pse > 0){
+    if(pse > L.pse * 1.2){ score+=35; fatores.push({icon:'🔴', txt:`PSE ${pse} UA — muito acima do limiar (${L.pse} UA). Sobrecarga severa.`}); }
+    else if(pse > L.pse){ score+=20; fatores.push({icon:'🟡', txt:`PSE ${pse} UA — acima do limiar (${L.pse} UA). Monitorar.`}); }
+  }
+
+  // 2. Alta intensidade
+  const ai = parseFloat(m['Alta intensidade (km)'] || m['gps-ai'] || 0);
+  if(ai > 0){
+    if(ai > L.ai * 1.3){ score+=25; fatores.push({icon:'🔴', txt:`Alta intensidade: ${ai}km — muito acima do limiar (${L.ai}km).`}); }
+    else if(ai > L.ai){ score+=15; fatores.push({icon:'🟡', txt:`Alta intensidade: ${ai}km — acima do limiar (${L.ai}km).`}); }
+  }
+
+  // 3. Acelerações
+  const acel = parseFloat(m['Acelerações'] || m['gps-acel'] || 0);
+  if(acel > 0){
+    if(acel > L.acel * 1.3){ score+=20; fatores.push({icon:'🔴', txt:`Acelerações: ${acel} — sobrecarga neuromuscular elevada.`}); }
+    else if(acel > L.acel){ score+=10; fatores.push({icon:'🟡', txt:`Acelerações: ${acel} — próximo do limite recomendado.`}); }
+  }
+
+  // 4. Sprints
+  const spr = parseFloat(m['Número de sprints'] || m['gps-nspr'] || 0);
+  if(spr > 0){
+    if(spr > L.spr * 1.3){ score+=15; fatores.push({icon:'🔴', txt:`Sprints: ${spr} — volume muito alto de esforços máximos.`}); }
+    else if(spr > L.spr){ score+=8; fatores.push({icon:'🟡', txt:`Sprints: ${spr} — volume elevado de esforços máximos.`}); }
+  }
+
+  // 5. Variação em relação ao período anterior
+  if(relAnterior){
+    const mAnt = relAnterior.dados?.metricas || {};
+    const pseAnt = parseFloat(mAnt['Carga PSE'] || mAnt['gps-pse'] || 0);
+    if(pse > 0 && pseAnt > 0){
+      const varPct = ((pse - pseAnt) / pseAnt) * 100;
+      if(varPct > L.var * 2){ score+=30; fatores.push({icon:'🔴', txt:`Carga aumentou ${varPct.toFixed(0)}% em relação ao período anterior — pico de carga crítico (ACWR).`}); }
+      else if(varPct > L.var){ score+=15; fatores.push({icon:'🟡', txt:`Carga aumentou ${varPct.toFixed(0)}% — variação acima do recomendado (máx ${L.var}%).`}); }
+      else if(varPct < 0){ fatores.push({icon:'🟢', txt:`Carga reduziu ${Math.abs(varPct).toFixed(0)}% em relação ao período anterior — recuperação adequada.`}); }
+    }
+  }
+
+  // 6. Histórico de lesões (campo risco preenchido na ficha)
+  const riscoHist = d.risco || '';
+  if(riscoHist === 'Alto'){ score+=20; fatores.push({icon:'⚠️', txt:'Histórico de lesões de risco alto registrado na ficha do atleta.'}); }
+  else if(riscoHist === 'Médio'){ score+=10; fatores.push({icon:'⚠️', txt:'Histórico de lesões de risco moderado registrado na ficha do atleta.'}); }
+
+  // Score máximo: 100
+  score = Math.min(score, 100);
+
+  // Classificação
+  let nivel, badge, cor, recomendacao;
+  if(score >= 70){
+    nivel='CRÍTICO'; badge='rb-critico'; cor='#FF0000';
+    recomendacao='⛔ Ação imediata recomendada. Consultar fisioterapeuta e reduzir carga significativamente. Considerar repouso ativo.';
+  } else if(score >= 45){
+    nivel='ALTO'; badge='rb-alto'; cor='#FF4444';
+    recomendacao='⚠️ Reduzir volume de treino nos próximos dias. Priorizar recuperação ativa. Acompanhar evolução diariamente.';
+  } else if(score >= 20){
+    nivel='MÉDIO'; badge='rb-medio'; cor='#FFB300';
+    recomendacao='🟡 Monitorar de perto. Manter carga atual mas evitar aumentos. Atenção à qualidade do sono e nutrição.';
+  } else {
+    nivel='BAIXO'; badge='rb-baixo'; cor='#00C853';
+    recomendacao='✅ Carga dentro do esperado. Atleta apto para treino normal. Manter monitoramento semanal.';
+  }
+
+  if(!fatores.length) fatores.push({icon:'✅', txt:'Nenhum fator de risco identificado com os dados disponíveis.'});
+
+  return {score, nivel, badge, cor, recomendacao, fatores};
+}
+
+function renderAlertaCard(resultado, nome, containerId){
+  const {score, nivel, badge, cor, recomendacao, fatores} = resultado;
+  const barColor = nivel==='CRÍTICO'?'#FF0000':nivel==='ALTO'?'#FF4444':nivel==='MÉDIO'?'#FFB300':'#00C853';
+  const cardClass = nivel==='CRÍTICO'?'risco-critico':nivel==='ALTO'?'risco-alto':nivel==='MÉDIO'?'risco-medio':'risco-baixo';
+
+  const html = `
+    <div class="risco-card ${cardClass}">
+      <div class="risco-header">
+        <div class="risco-nome">${nome||'Atleta'}</div>
+        <span class="risco-badge ${badge}">${nivel}</span>
+      </div>
+      <div class="risco-score-bar">
+        <span style="font-size:11px;color:var(--c4);min-width:80px;">Índice de risco</span>
+        <div class="risco-score-track"><div class="risco-score-fill" style="width:${score}%;background:${barColor};"></div></div>
+        <span class="risco-score-num" style="color:${barColor};">${score}/100</span>
+      </div>
+      <div class="risco-fatores">
+        ${fatores.map(f=>`<div class="risco-fator"><span class="risco-fator-icon">${f.icon}</span><span>${f.txt}</span></div>`).join('')}
+      </div>
+      <div class="risco-rec">${recomendacao}</div>
+    </div>`;
+
+  document.getElementById(containerId).innerHTML = html;
+}
+
+async function calcularRisco(){
+  const nome = v('a-nome');
+  const cont = document.getElementById('alerta-inline-result');
+  document.getElementById('sa-alerta').style.display = 'block';
+
+  if(!nome){ cont.innerHTML='<p style="color:var(--c4);font-size:13px;">Preencha o nome do atleta primeiro.</p>'; return; }
+
+  // Buscar período anterior do mesmo atleta
+  const{data:rels}=await supa.from('relatorios').select('*')
+    .eq('user_id',cU.id).eq('tipo','atleta').eq('nome',nome)
+    .order('created_at',{ascending:false}).limit(2);
+
+  const relAtual = {dados:{metricas: coletarMetricasAtleta(), risco: v('p-risco')||''}};
+  const relAnterior = rels && rels.length > 0 ? rels[0] : null;
+
+  const resultado = calcularRiscoAtleta(relAtual, relAnterior, null);
+  renderAlertaCard(resultado, nome, 'alerta-inline-result');
+  gt('sa-alerta');
+}
+
+async function carregarPainelLesao(){
+  const cont = document.getElementById('lesao-lista');
+  cont.innerHTML = '<div class="hemp"><div class="dp" style="justify-content:center;"><span></span><span></span><span></span></div><p style="margin-top:12px;color:var(--c4);">Calculando...</p></div>';
+
+  // Buscar último relatório de cada atleta
+  const{data:rels}=await supa.from('relatorios').select('*')
+    .eq('user_id',cU.id).eq('tipo','atleta')
+    .order('created_at',{ascending:false});
+
+  if(!rels?.length){ cont.innerHTML='<div class="hemp"><div style="font-size:48px;">🏃</div><div style="margin-top:12px;">Nenhum atleta registrado ainda.</div></div>'; return; }
+
+  // Agrupar por nome — pegar o mais recente de cada um
+  const porNome = {};
+  rels.forEach(r=>{
+    if(!porNome[r.nome]) porNome[r.nome] = [];
+    porNome[r.nome].push(r);
+  });
+
+  // Calcular risco de cada atleta
+  const resultados = Object.entries(porNome).map(([nome, lista])=>{
+    const atual = lista[0];
+    const anterior = lista[1] || null;
+    const resultado = calcularRiscoAtleta(atual, anterior, null);
+    return {nome, resultado, data: atual.created_at, posicao: atual.posicao||''};
+  });
+
+  // Ordenar por score (maior risco primeiro)
+  resultados.sort((a,b)=>b.resultado.score - a.resultado.score);
+
+  // Resumo por nível
+  const criticos = resultados.filter(r=>r.resultado.nivel==='CRÍTICO').length;
+  const altos = resultados.filter(r=>r.resultado.nivel==='ALTO').length;
+  const medios = resultados.filter(r=>r.resultado.nivel==='MÉDIO').length;
+  const baixos = resultados.filter(r=>r.resultado.nivel==='BAIXO').length;
+
+  let html = `
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">
+      <div class="fb-stat" style="border-left:3px solid #FF0000;"><div class="fb-stat-num" style="color:#FF0000;">${criticos}</div><div class="fb-stat-lbl">Crítico</div></div>
+      <div class="fb-stat" style="border-left:3px solid #FF4444;"><div class="fb-stat-num" style="color:#FF4444;">${altos}</div><div class="fb-stat-lbl">Alto</div></div>
+      <div class="fb-stat" style="border-left:3px solid #FFB300;"><div class="fb-stat-num" style="color:#FFB300;">${medios}</div><div class="fb-stat-lbl">Médio</div></div>
+      <div class="fb-stat" style="border-left:3px solid #00C853;"><div class="fb-stat-num" style="color:#00C853;">${baixos}</div><div class="fb-stat-lbl">Baixo</div></div>
+    </div>`;
+
+  resultados.forEach(({nome, resultado, data, posicao})=>{
+    const {score, nivel, badge, cor, fatores} = resultado;
+    html += `
+      <div class="painel-atleta">
+        <div class="pa-top">
+          <div>
+            <div class="pa-nome">${nome}</div>
+            ${posicao?`<div style="font-size:11px;color:var(--c4);">${posicao}</div>`:''}
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span class="risco-badge ${badge}">${nivel}</span>
+            <span style="font-size:13px;font-weight:700;color:${cor};">${score}/100</span>
+            <div class="pa-data">${new Date(data).toLocaleDateString('pt-BR')}</div>
+          </div>
+        </div>
+        <div class="risco-score-bar" style="margin-bottom:8px;">
+          <div class="risco-score-track"><div class="risco-score-fill" style="width:${score}%;background:${cor};"></div></div>
+        </div>
+        <div class="pa-fatores">${fatores.slice(0,2).map(f=>`${f.icon} ${f.txt}`).join('<br>')}</div>
+      </div>`;
+  });
+
+  cont.innerHTML = html;
+}
+
+// Mostrar aba de lesão para admin
+function mostrarAbaLesao(){
+  const btn = document.getElementById('tab-lesao-btn');
+  if(btn) btn.style.display = 'flex';
+}
+
+// Calcular risco automaticamente ao preencher GPS
+function autoRisco(){
+  const nome = v('a-nome');
+  const pse = v('gps-pse');
+  if(nome && pse){
+    document.getElementById('sa-alerta').style.display = 'block';
+    calcularRisco();
+  }
+}
 
 // ===== EVOLUÇÃO =====
 let evoChartScore=null,evoChartMet=null,evoAtleta=null,evoPos=null,evoRels=[];
