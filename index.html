@@ -2033,29 +2033,33 @@ var METS={
 };
 
 function onPosA(){
-  var pos=v('a-pos');
-  rPerfis('a-pos','a-pch','a-perf');
-  var label=document.getElementById('a-met-pos');
-  var cont=document.getElementById('a-met-campos');
-  var obs=document.getElementById('a-obs');
-  if(!pos||!METS[pos]){
-    label.textContent='';
-    cont.innerHTML='<div class="ibanner">Selecione a <strong>posicao</strong> para carregar as metricas especificas.</div>';
-    if(obs)obs.placeholder='Selecione a posicao para ver sugestoes...';
-    return;
-  }
-  label.textContent='-- '+pos;
-  if(obs)obs.placeholder=METS[pos].obs;
-  var html='';
-  METS[pos].g.forEach(function(grp){
-    html+='<p style="font-size:10px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;padding-bottom:5px;border-bottom:1px solid #1e1e1e;">'+grp.t+'</p><div class="fg3">';
-    grp.c.forEach(function(f){
-      var step=f.s?' step="'+f.s+'"':'';
-      html+='<div class="fgrp"><label class="flbl">'+f.l+' <i class="ti">?<span class="tb">'+f.tip+'</span></i></label><input class="finp" id="'+f.id+'" type="number"'+step+' placeholder="0"></div>';
+  try{
+    var pos=v('a-pos');
+    rPerfis('a-pos','a-pch','a-perf');
+    var label=document.getElementById('a-met-pos');
+    var cont=document.getElementById('a-met-campos');
+    var obs=document.getElementById('a-obs');
+    if(!pos||!METS[pos]){
+      if(label)label.textContent='';
+      if(cont)cont.innerHTML='<div class="ibanner">Selecione a <strong>posicao</strong> para carregar as metricas especificas.</div>';
+      if(obs)obs.placeholder='Selecione a posicao para ver sugestoes...';
+      return;
+    }
+    if(label)label.textContent=' - '+pos;
+    if(obs)obs.placeholder=METS[pos].obs||'';
+    var html='';
+    METS[pos].g.forEach(function(grp){
+      html+='<div style="margin-bottom:14px;"><p style="font-size:10px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #1e1e1e;">'+grp.t+'</p><div class="fg3">';
+      grp.c.forEach(function(f){
+        var step=f.s?' step="'+f.s+'"':'';
+        html+='<div class="fgrp"><label class="flbl">'+f.l+'</label><input class="finp" id="'+f.id+'" type="number"'+step+' placeholder="0"></div>';
+      });
+      html+='</div></div>';
     });
-    html+='</div>';
-  });
-  cont.innerHTML=html;
+    if(cont)cont.innerHTML=html;
+  }catch(err){
+    console.error('onPosA erro:',err);
+  }
 }
 
 function coletarMets(){
