@@ -348,6 +348,29 @@ canvas.rc{width:100%;max-width:320px;display:block;margin:0 auto;}
 .extracao-status-icon{font-size:14px;min-width:20px;}
 .upload-aviso{background:#FFB30018;border:1px solid var(--av);border-radius:8px;padding:12px 16px;font-size:12px;color:var(--c1);margin-bottom:16px;line-height:1.6;}
 
+
+/* PRÉ-JOGO */
+.pj-input-tabs{display:flex;gap:4px;background:var(--c8);border-radius:8px;padding:4px;margin-bottom:16px;}
+.pj-input-tab{flex:1;padding:9px;border:none;background:none;color:var(--c4);font-size:13px;font-weight:500;cursor:pointer;border-radius:6px;transition:all .2s;text-align:center;}
+.pj-input-tab.active{background:var(--verde);color:var(--p);font-weight:600;}
+.pj-input-sec{display:none;}
+.pj-input-sec.active{display:block;}
+.upload-area{border:2px dashed var(--c6);border-radius:12px;padding:32px;text-align:center;cursor:pointer;transition:all .2s;background:var(--c8);}
+.upload-area:hover{border-color:var(--verde);background:var(--vd);}
+.upload-area.dragover{border-color:var(--verde);background:var(--vd);}
+.upload-icon{font-size:36px;margin-bottom:10px;}
+.upload-txt{font-size:13px;color:var(--c2);margin-bottom:6px;}
+.upload-sub{font-size:11px;color:var(--c4);}
+.upload-preview{margin-top:14px;display:none;}
+.upload-preview img{max-width:100%;border-radius:8px;border:1px solid var(--c6);}
+.jogador-card{background:var(--c9);border:1px solid var(--c7);border-radius:10px;padding:14px;margin-bottom:10px;}
+.jogador-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.jogador-num{background:var(--verde);color:var(--p);font-weight:700;font-size:11px;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.jogador-del{background:none;border:none;color:var(--err);font-size:16px;cursor:pointer;}
+.pj-out-box{background:var(--c9);border:1px solid var(--verde);border-radius:12px;padding:20px;margin-top:16px;}
+.pj-out-title{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;color:var(--verde);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.pj-out-text{background:var(--c8);border-radius:8px;padding:16px;font-size:13px;color:var(--c1);line-height:1.9;white-space:pre-wrap;min-height:80px;max-height:600px;overflow-y:auto;}
+
 .toast{position:fixed;bottom:28px;right:28px;background:var(--verde);color:var(--p);font-weight:600;font-size:13px;padding:12px 20px;border-radius:8px;z-index:999;opacity:0;transform:translateY(10px);transition:all .3s;pointer-events:none;}
 .toast.show{opacity:1;transform:translateY(0);}
 .hidden{display:none!important;}
@@ -396,6 +419,7 @@ canvas.rc{width:100%;max-width:320px;display:block;margin:0 auto;}
   <button class="mtab" onclick="swTab('hist',this)">📂 Histórico</button>
   <button class="mtab" onclick="swTab('dashboard',this)">📊 Dashboard</button>
   <button class="mtab" onclick="swTab('upload',this)">📸 Upload de Dados</button>
+  <button class="mtab" onclick="swTab('prejogo',this)">⚔️ Pré-jogo</button>
   <button class="mtab" onclick="swTab('bolaparada',this)">🎯 Bola Parada</button>
   <button class="mtab" onclick="swTab('video',this)">🎬 Análise de Vídeo</button>
   <button class="mtab" id="tab-lesao-btn" onclick="swTab('lesao',this)" style="display:none;">🚨 Risco de Lesão</button>
@@ -481,6 +505,21 @@ canvas.rc{width:100%;max-width:320px;display:block;margin:0 auto;}
     <div style="padding:0 8px;">
       <p style="font-size:11px;color:var(--c4);line-height:1.8;">Sofascore • Wyscout<br>InStat • FlashScore<br>Planilha Excel<br>Qualquer screenshot</p>
     </div>
+  </div>
+</div>
+
+<!-- SB PRÉ-JOGO -->
+<div class="sidebar hidden" id="sb-prejogo">
+  <div class="sbs">
+    <div class="sbl">Seções</div>
+    <button class="sbb active" onclick="gt('pj-id')"><span class="si">⚙️</span>Identificação</button>
+    <button class="sbb" onclick="gt('pj-dados')"><span class="si">📊</span>Dados do adversário</button>
+    <button class="sbb" onclick="gt('pj-jogadores')"><span class="si">👤</span>Jogadores perigosos</button>
+    <button class="sbb" onclick="gt('pj-nosso')"><span class="si">🏟️</span>Nosso time</button>
+    <button class="sbb" onclick="gt('pj-gerar')"><span class="si">⚡</span>Gerar plano</button>
+  </div>
+  <div class="sbs">
+    <button class="sbb" onclick="limparPJ()"><span class="si">🗑️</span>Limpar</button>
   </div>
 </div>
 <!-- SB BOLA PARADA -->
@@ -995,6 +1034,189 @@ canvas.rc{width:100%;max-width:320px;display:block;margin:0 auto;}
         <div style="display:flex;gap:8px;margin-left:auto;">
           <button class="btn bs" style="padding:7px 14px;font-size:12px;" onclick="expTXT('up-texto',v('up-atleta-nome')||'upload')">⬇ TXT</button>
           <button class="btn bg" style="padding:7px 14px;font-size:12px;" onclick="cpIA('up-texto')">📋 Copiar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== ABA PRÉ-JOGO ===== -->
+<div class="mc hidden" id="tab-prejogo">
+  <div class="ph"><div class="pt">Pré-jogo com IA</div><div class="ps">Análise completa do adversário e plano de jogo automático.</div></div>
+
+  <!-- Identificação -->
+  <div class="sblk" id="pj-id">
+    <div class="stitle">⚙️ Identificação da partida</div>
+    <div class="fg">
+      <div class="fgrp"><label class="flbl">Nosso time</label><input class="finp" id="pj-nos-time" placeholder="Nome do nosso time"></div>
+      <div class="fgrp"><label class="flbl">Adversário</label><input class="finp" id="pj-adv-nome" placeholder="Nome do adversário"></div>
+      <div class="fgrp"><label class="flbl">Competição</label><input class="finp" id="pj-comp" placeholder="Ex: Brasileiro Série A"></div>
+      <div class="fgrp"><label class="flbl">Data da partida</label><input class="finp" id="pj-data" type="date"></div>
+      <div class="fgrp"><label class="flbl">Local</label>
+        <select class="fsel" id="pj-local">
+          <option value="">Selecione...</option>
+          <option>Casa</option><option>Fora</option><option>Neutro</option>
+        </select>
+      </div>
+      <div class="fgrp"><label class="flbl">Importância da partida</label>
+        <select class="fsel" id="pj-import">
+          <option value="">Selecione...</option>
+          <option>Decisiva (final/semifinal)</option><option>Alta (mata-mata)</option>
+          <option>Normal (fase de grupos)</option><option>Baixa (já classificado/eliminado)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dados do adversário -->
+  <div class="sblk" id="pj-dados">
+    <div class="stitle">📊 Dados do adversário</div>
+
+    <div class="pj-input-tabs">
+      <button class="pj-input-tab active" onclick="swPJInput('manual',this)">✏️ Preencher manualmente</button>
+      <button class="pj-input-tab" onclick="swPJInput('imagem',this)">📸 Upload de imagem</button>
+    </div>
+
+    <!-- Manual -->
+    <div class="pj-input-sec active" id="pj-sec-manual">
+      <div class="fg">
+        <div class="fgrp"><label class="flbl">Formação principal <i class="tip-icon">?<span class="tip-box">Formação mais usada pelo adversário nas últimas partidas.</span></i></label>
+          <select class="fsel" id="pj-adv-form">
+            <option value="">Selecione...</option>
+            <option>4-3-3</option><option>4-4-2</option><option>4-2-3-1</option><option>3-5-2</option>
+            <option>3-4-3</option><option>5-3-2</option><option>4-1-4-1</option><option>4-3-2-1</option>
+          </select>
+        </div>
+        <div class="fgrp"><label class="flbl">Formação alternativa</label>
+          <select class="fsel" id="pj-adv-form2">
+            <option value="">Selecione...</option>
+            <option>4-3-3</option><option>4-4-2</option><option>4-2-3-1</option><option>3-5-2</option>
+            <option>3-4-3</option><option>5-3-2</option><option>4-1-4-1</option>
+          </select>
+        </div>
+        <div class="fgrp"><label class="flbl">Estilo de jogo ofensivo</label>
+          <select class="fsel" id="pj-adv-of">
+            <option value="">Selecione...</option>
+            <option>Posse e construção baixa</option><option>Jogo direto / longo</option>
+            <option>Contra-ataque veloz</option><option>Pressing alto ofensivo</option>
+            <option>Jogo pelas beiradas</option><option>Jogo pelo meio</option><option>Variado</option>
+          </select>
+        </div>
+        <div class="fgrp"><label class="flbl">Estilo defensivo</label>
+          <select class="fsel" id="pj-adv-def">
+            <option value="">Selecione...</option>
+            <option>Bloco baixo compacto</option><option>Bloco médio</option>
+            <option>Pressing alto agressivo</option><option>Marcação por zona</option>
+            <option>Marcação individual</option><option>Linha alta</option><option>Variado</option>
+          </select>
+        </div>
+        <div class="fgrp"><label class="flbl">Posse de bola média (%) <i class="tip-icon">?<span class="tip-box">Média das últimas partidas. Ex: 54</span></i></label>
+          <input class="finp" id="pj-adv-posse" type="number" placeholder="0">
+        </div>
+        <div class="fgrp"><label class="flbl">xG médio / jogo <i class="tip-icon">?<span class="tip-box">Qualidade média das chances criadas por jogo.</span></i></label>
+          <input class="finp" id="pj-adv-xg" type="number" step="0.01" placeholder="0.00">
+        </div>
+        <div class="fgrp"><label class="flbl">xGA médio / jogo <i class="tip-icon">?<span class="tip-box">Qualidade média das chances sofridas por jogo.</span></i></label>
+          <input class="finp" id="pj-adv-xga" type="number" step="0.01" placeholder="0.00">
+        </div>
+        <div class="fgrp"><label class="flbl">PPDA <i class="tip-icon">?<span class="tip-box">Passes permitidos por ação defensiva. Abaixo de 8 = pressing alto.</span></i></label>
+          <input class="finp" id="pj-adv-ppda" type="number" step="0.1" placeholder="0.0">
+        </div>
+        <div class="fgrp"><label class="flbl">Gols marcados (últimos 5 jogos)</label><input class="finp" id="pj-adv-gm" type="number" placeholder="0"></div>
+        <div class="fgrp"><label class="flbl">Gols sofridos (últimos 5 jogos)</label><input class="finp" id="pj-adv-gs" type="number" placeholder="0"></div>
+      </div>
+      <div class="fg1">
+        <div class="fgrp"><label class="flbl">Padrões ofensivos identificados <i class="tip-icon">?<span class="tip-box">Como o adversário constrói e finaliza as jogadas. Descreva padrões recorrentes.</span></i></label>
+          <textarea class="ftxt" id="pj-adv-pad-of" style="min-height:90px;" placeholder="Ex: Saída de bola pelo lateral direito, que combina com o meia e inverte para o ponta esquerdo invertido. Frequente uso de bola longa para o centroavante de referência..."></textarea>
+        </div>
+        <div class="fgrp"><label class="flbl">Vulnerabilidades identificadas <i class="tip-icon">?<span class="tip-box">Pontos fracos que podem ser explorados. Seja específico: qual zona, qual jogador, qual situação.</span></i></label>
+          <textarea class="ftxt" id="pj-adv-vuln" style="min-height:90px;" placeholder="Ex: Lateral esquerdo lento na transição defensiva — explorar com contra-ataque pelo lado direito. Zagueiro direito perde duelos aéreos com frequência..."></textarea>
+        </div>
+        <div class="fgrp"><label class="flbl">Bola parada do adversário <i class="tip-icon">?<span class="tip-box">Padrões de escanteio, falta e lateral do adversário. O que eles repetem?</span></i></label>
+          <textarea class="ftxt" id="pj-adv-bp" style="min-height:80px;" placeholder="Ex: Escanteio sempre no segundo pau com bloqueio do 9 para o 5 chegar de trás. Cobrador de falta é o camisa 10 sempre no canto esquerdo do goleiro..."></textarea>
+        </div>
+        <div class="fgrp"><label class="flbl">Momento atual do adversário</label>
+          <textarea class="ftxt" id="pj-adv-momento" style="min-height:70px;" placeholder="Ex: Vem de 3 vitórias consecutivas. Titular do meio-campo suspenso. Jogaram há 3 dias (fadiga acumulada)..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upload imagem -->
+    <div class="pj-input-sec" id="pj-sec-imagem">
+      <div class="ibanner" style="margin-bottom:16px;">
+        📸 Faça upload de prints do <strong>Sofascore</strong>, <strong>Wyscout</strong>, <strong>InStat</strong> ou qualquer plataforma de dados. A IA vai ler e extrair as informações automaticamente.
+      </div>
+      <div class="upload-area" id="pj-upload-area" onclick="document.getElementById('pj-file-input').click()" ondragover="dragOver(event,'pj-upload-area')" ondragleave="dragLeave('pj-upload-area')" ondrop="dropFile(event)">
+        <div class="upload-icon">📊</div>
+        <div class="upload-txt">Clique para selecionar ou arraste a imagem aqui</div>
+        <div class="upload-sub">PNG, JPG, JPEG — Print de plataformas de dados esportivos</div>
+        <input type="file" id="pj-file-input" accept="image/*" style="display:none;" onchange="previewImagem(this)">
+      </div>
+      <div class="upload-preview" id="pj-preview">
+        <img id="pj-preview-img" src="" alt="Preview">
+        <div style="display:flex;gap:8px;margin-top:10px;">
+          <button class="btn bs" style="font-size:12px;padding:7px 14px;" onclick="document.getElementById('pj-file-input').click()">🔄 Trocar imagem</button>
+          <button class="btn bd" style="font-size:12px;padding:7px 14px;" onclick="removerImagem()">🗑 Remover</button>
+        </div>
+      </div>
+      <div class="fgrp" style="margin-top:14px;">
+        <label class="flbl">Observações adicionais sobre a imagem</label>
+        <textarea class="ftxt" id="pj-img-obs" placeholder="Explique o que está na imagem e o que quer que a IA analise. Ex: 'Esta é a tabela de métricas ofensivas do adversário nas últimas 5 partidas. Quero entender os padrões de criação de chances.'"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- Jogadores perigosos -->
+  <div class="sblk" id="pj-jogadores">
+    <div class="stitle">👤 Jogadores perigosos</div>
+    <p style="color:var(--c2);font-size:13px;margin-bottom:14px;">Cadastre os jogadores que mais ameaçam. A IA vai sugerir como neutralizá-los individualmente.</p>
+    <div id="pj-jogadores-lista"></div>
+    <button class="add-evento-btn" onclick="addJogador()">+ Adicionar jogador perigoso</button>
+  </div>
+
+  <!-- Nosso time -->
+  <div class="sblk" id="pj-nosso">
+    <div class="stitle">🏟️ Nosso time</div>
+    <div class="fg">
+      <div class="fgrp"><label class="flbl">Formação prevista</label>
+        <select class="fsel" id="pj-nos-form">
+          <option value="">Selecione...</option>
+          <option>4-3-3</option><option>4-4-2</option><option>4-2-3-1</option><option>3-5-2</option>
+          <option>3-4-3</option><option>5-3-2</option><option>4-1-4-1</option>
+        </select>
+      </div>
+      <div class="fgrp"><label class="flbl">Desfalques / Lesionados</label>
+        <input class="finp" id="pj-nos-desf" placeholder="Nomes dos jogadores indisponíveis">
+      </div>
+      <div class="fgrp"><label class="flbl">Dúvidas para o jogo</label>
+        <input class="finp" id="pj-nos-duvidas" placeholder="Ex: Lateral direito em dúvida, volante no limite de cartões">
+      </div>
+      <div class="fgrp"><label class="flbl">Momento do nosso time</label>
+        <textarea class="ftxt" id="pj-nos-momento" placeholder="Ex: Vem de derrota, precisa vencer para não ser rebaixado. 3 jogos sem sofrer gols..."></textarea>
+      </div>
+      <div class="fgrp ff"><label class="flbl">Estilo de jogo que queremos impor</label>
+        <textarea class="ftxt" id="pj-nos-estilo" placeholder="Ex: Queremos pressionar alto nos primeiros 20 minutos, depois segurar o resultado com posse de bola..."></textarea>
+      </div>
+      <div class="fgrp ff"><label class="flbl">Objetivos táticos específicos</label>
+        <textarea class="ftxt" id="pj-nos-obj" placeholder="Ex: Explorar o espaço atrás do lateral esquerdo adversário com o ponta direito. Neutralizar o camisa 10 com marcação por zona..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gerar -->
+  <div class="sblk" id="pj-gerar">
+    <div class="stitle">⚡ Gerar plano de jogo</div>
+    <p style="color:var(--c2);font-size:13px;margin-bottom:16px;">A IA vai gerar um documento completo de pré-jogo com análise do adversário, neutralização dos jogadores perigosos e plano de jogo tático.</p>
+    <div class="br"><button class="btn bp" onclick="gerarPJ()">⚡ Gerar plano de jogo</button></div>
+    <div class="pj-out-box hidden" id="pj-output">
+      <div class="pj-out-title">⚔️ Plano de Jogo — Potencial Sports</div>
+      <div class="pj-out-text" id="pj-texto"></div>
+      <div class="fbbar" style="margin-top:12px;padding-top:12px;border-top:1px solid var(--c7);">
+        <div style="display:flex;gap:8px;margin-left:auto;">
+          <button class="btn bs" style="padding:7px 14px;font-size:12px;" onclick="expTXT('pj-texto',(v('pj-nos-time')||'time')+'-vs-'+(v('pj-adv-nome')||'adv'))">⬇ TXT</button>
+          <button class="btn bs" style="padding:7px 14px;font-size:12px;" onclick="expPDFs('pj-texto',(v('pj-nos-time')||'Time')+' x '+(v('pj-adv-nome')||'Adversário'),'prejogo')">⬇ PDF</button>
+          <button class="btn bg" style="padding:7px 14px;font-size:12px;" onclick="cpIA('pj-texto')">📋 Copiar</button>
         </div>
       </div>
     </div>
@@ -2362,6 +2584,258 @@ function limparUpload(){
   showToast('Limpo. Pronto para novo upload.');
 }
 
+
+// ===== PRÉ-JOGO =====
+let pjJogadores = [];
+let pjImagemBase64 = null;
+let pjInputMode = 'manual';
+
+function swPJInput(mode, btn){
+  pjInputMode = mode;
+  document.querySelectorAll('.pj-input-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.pj-input-sec').forEach(s=>s.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('pj-sec-'+mode).classList.add('active');
+}
+
+// Upload de imagem
+function dragOver(e, id){ e.preventDefault(); document.getElementById(id)?.classList.add('dragover'); }
+function dragLeave(id){ document.getElementById(id)?.classList.remove('dragover'); }
+function dropFile(e){
+  e.preventDefault();
+  dragLeave('pj-upload-area');
+  const file = e.dataTransfer.files[0];
+  if(file && file.type.startsWith('image/')) processImagem(file);
+}
+
+function previewImagem(input){
+  const file = input.files[0];
+  if(file) processImagem(file);
+}
+
+function processImagem(file){
+  const reader = new FileReader();
+  reader.onload = (e)=>{
+    pjImagemBase64 = e.target.result.split(',')[1];
+    document.getElementById('pj-preview-img').src = e.target.result;
+    document.getElementById('pj-preview').style.display = 'block';
+    document.getElementById('pj-upload-area').style.display = 'none';
+    showToast('✓ Imagem carregada!');
+  };
+  reader.readAsDataURL(file);
+}
+
+function removerImagem(){
+  pjImagemBase64 = null;
+  document.getElementById('pj-preview').style.display = 'none';
+  document.getElementById('pj-upload-area').style.display = 'block';
+  document.getElementById('pj-file-input').value = '';
+}
+
+// Jogadores perigosos
+function addJogador(){
+  const id = Date.now();
+  pjJogadores.push({id, nome:'', pos:'', pe:'', caract:'', como:''});
+  renderJogadores();
+  setTimeout(()=>document.getElementById('jog-nome-'+id)?.focus(), 50);
+}
+
+function removeJogador(id){
+  pjJogadores = pjJogadores.filter(j=>j.id!==id);
+  renderJogadores();
+}
+
+function updJog(id, campo, val){
+  const j = pjJogadores.find(j=>j.id===id);
+  if(j) j[campo] = val;
+}
+
+function renderJogadores(){
+  const cont = document.getElementById('pj-jogadores-lista');
+  if(!pjJogadores.length){
+    cont.innerHTML = '<p style="color:var(--c4);font-size:13px;padding:8px 0;">Nenhum jogador cadastrado ainda.</p>';
+    return;
+  }
+  cont.innerHTML = pjJogadores.map((j,i)=>`
+    <div class="jogador-card">
+      <div class="jogador-card-top">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="jogador-num">${i+1}</div>
+          <span style="font-size:13px;font-weight:600;color:var(--b);">Jogador perigoso ${i+1}</span>
+        </div>
+        <button class="jogador-del" onclick="removeJogador(${j.id})">×</button>
+      </div>
+      <div class="fg3">
+        <div class="fgrp"><label class="flbl">Nome</label>
+          <input class="finp" id="jog-nome-${j.id}" value="${j.nome}" placeholder="Nome do jogador" oninput="updJog(${j.id},'nome',this.value)">
+        </div>
+        <div class="fgrp"><label class="flbl">Posição</label>
+          <select class="fsel" oninput="updJog(${j.id},'pos',this.value)">
+            <option value="">Selecione...</option>
+            <option ${j.pos==='Goleiro'?'selected':''}>Goleiro</option>
+            <option ${j.pos==='Zagueiro'?'selected':''}>Zagueiro</option>
+            <option ${j.pos==='Lateral direito'?'selected':''}>Lateral direito</option>
+            <option ${j.pos==='Lateral esquerdo'?'selected':''}>Lateral esquerdo</option>
+            <option ${j.pos==='Volante'?'selected':''}>Volante</option>
+            <option ${j.pos==='Meia central'?'selected':''}>Meia central</option>
+            <option ${j.pos==='Meia-atacante'?'selected':''}>Meia-atacante</option>
+            <option ${j.pos==='Ponta direita'?'selected':''}>Ponta direita</option>
+            <option ${j.pos==='Ponta esquerda'?'selected':''}>Ponta esquerda</option>
+            <option ${j.pos==='Centroavante'?'selected':''}>Centroavante</option>
+          </select>
+        </div>
+        <div class="fgrp"><label class="flbl">Pé dominante</label>
+          <select class="fsel" oninput="updJog(${j.id},'pe',this.value)">
+            <option value="">Selecione...</option>
+            <option ${j.pe==='Direito'?'selected':''}>Direito</option>
+            <option ${j.pe==='Esquerdo'?'selected':''}>Esquerdo</option>
+            <option ${j.pe==='Ambidestro'?'selected':''}>Ambidestro</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg">
+        <div class="fgrp"><label class="flbl">Características principais <i class="tip-icon">?<span class="tip-box">O que esse jogador faz bem? Velocidade, drible, finalização, passes longos...</span></i></label>
+          <textarea class="ftxt" style="min-height:70px;" placeholder="Ex: Velocidade acima da média, dribla bem no 1x1, finaliza com o pé esquerdo de dentro da área..." oninput="updJog(${j.id},'caract',this.value)">${j.caract}</textarea>
+        </div>
+        <div class="fgrp"><label class="flbl">Como neutralizá-lo <i class="tip-icon">?<span class="tip-box">Sua observação de como marcar esse jogador. A IA vai complementar com sugestões táticas.</span></i></label>
+          <textarea class="ftxt" style="min-height:70px;" placeholder="Ex: Fechar o corredor com o lateral e forçar para o lado direito dele. Evitar espaço nas costas..." oninput="updJog(${j.id},'como',this.value)">${j.como}</textarea>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function limparPJ(){
+  pjJogadores=[];pjImagemBase64=null;pjInputMode='manual';
+  renderJogadores();removerImagem();
+  document.querySelectorAll('#tab-prejogo input,#tab-prejogo select,#tab-prejogo textarea').forEach(el=>{
+    if(el.type!=='file')el.value='';
+  });
+  document.getElementById('pj-output').classList.add('hidden');
+  showToast('Formulário limpo.');
+}
+
+async function gerarPJ(){
+  const nos = v('pj-nos-time')||'Nosso time';
+  const adv = v('pj-adv-nome')||'Adversário';
+  const out = document.getElementById('pj-output');
+  const resEl = document.getElementById('pj-texto');
+
+  // Montar dados dos jogadores perigosos
+  const jogsStr = pjJogadores.filter(j=>j.nome).map((j,i)=>`
+Jogador ${i+1}: ${j.nome} | ${j.pos||'—'} | Pé: ${j.pe||'—'}
+Características: ${j.caract||'Não informado'}
+Como neutralizar (observação do analista): ${j.como||'Não informado'}`).join('
+') || 'Nenhum jogador cadastrado.';
+
+  // Montar dados do adversário conforme modo
+  let dadosAdv = '';
+  if(pjInputMode==='manual'){
+    dadosAdv = `Formação principal: ${v('pj-adv-form')||'—'}
+Formação alternativa: ${v('pj-adv-form2')||'—'}
+Estilo ofensivo: ${v('pj-adv-of')||'—'}
+Estilo defensivo: ${v('pj-adv-def')||'—'}
+Posse de bola média: ${v('pj-adv-posse')||'—'}%
+xG médio / jogo: ${v('pj-adv-xg')||'—'}
+xGA médio / jogo: ${v('pj-adv-xga')||'—'}
+PPDA: ${v('pj-adv-ppda')||'—'}
+Gols marcados (últ. 5): ${v('pj-adv-gm')||'—'}
+Gols sofridos (últ. 5): ${v('pj-adv-gs')||'—'}
+
+Padrões ofensivos:
+${v('pj-adv-pad-of')||'Não informado'}
+
+Vulnerabilidades:
+${v('pj-adv-vuln')||'Não informado'}
+
+Bola parada:
+${v('pj-adv-bp')||'Não informado'}
+
+Momento atual:
+${v('pj-adv-momento')||'Não informado'}`;
+  } else {
+    dadosAdv = `[DADOS VIA IMAGEM — ver imagem anexada]
+Observações do analista sobre a imagem: ${v('pj-img-obs')||'Analisar todos os dados disponíveis na imagem.'}`;
+  }
+
+  // Se tiver imagem, instrução especial
+  const temImagem = pjInputMode==='imagem' && pjImagemBase64;
+
+  const promptTexto = `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+POTENCIAL SPORTS — PLANO DE PRÉ-JOGO COM IA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Você é um analista de desempenho e scout sênior da Potencial Sports.
+Gere um PLANO DE PRÉ-JOGO completo e profissional para o confronto abaixo.
+
+PARTIDA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${nos} x ${adv}
+Competição: ${v('pj-comp')||'—'} | Data: ${v('pj-data')||'—'} | Local: ${v('pj-local')||'—'}
+Importância: ${v('pj-import')||'—'}
+
+DADOS DO ADVERSÁRIO (${adv})
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${dadosAdv}
+
+JOGADORES PERIGOSOS DO ADVERSÁRIO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${jogsStr}
+
+NOSSO TIME (${nos})
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Formação prevista: ${v('pj-nos-form')||'—'}
+Desfalques: ${v('pj-nos-desf')||'Nenhum'}
+Dúvidas: ${v('pj-nos-duvidas')||'Nenhuma'}
+Momento: ${v('pj-nos-momento')||'Não informado'}
+Estilo que queremos impor: ${v('pj-nos-estilo')||'Não informado'}
+Objetivos táticos: ${v('pj-nos-obj')||'Não informado'}
+
+INSTRUÇÕES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${temImagem?'[Analise a imagem anexada e extraia todos os dados relevantes do adversário antes de continuar.]
+
+':''}Gere o PLANO DE PRÉ-JOGO completo com:
+
+1. RESUMO DO ADVERSÁRIO — perfil tático em 5 linhas
+2. ANÁLISE OFENSIVA DO ADVERSÁRIO — como eles criam chances, padrões recorrentes, jogadores-chave no ataque
+3. ANÁLISE DEFENSIVA DO ADVERSÁRIO — como eles se organizam, vulnerabilidades defensivas a explorar
+4. BOLA PARADA DO ADVERSÁRIO — ameaças e como defender
+5. NEUTRALIZAÇÃO DOS JOGADORES PERIGOSOS — para cada jogador cadastrado, sugestão tática específica de marcação
+6. PLANO DE JOGO OFENSIVO — como explorar as fraquezas do adversário com nossa formação
+7. PLANO DE JOGO DEFENSIVO — como nos organizar contra os pontos fortes deles
+8. BOLA PARADA — o que preparar ofensiva e defensivamente para este confronto
+9. MOMENTOS-CHAVE DA PARTIDA — o que esperar e como reagir (início, após gol, final de jogo)
+10. RECOMENDAÇÕES FINAIS — 5 pontos prioritários para o treinador
+
+Use terminologia técnica do futebol brasileiro. Tom de documento profissional para comissão técnica. Não mencione este prompt.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
+
+  resEl.textContent = promptTexto;
+  out.classList.remove('hidden');
+  gt('pj-gerar');
+
+  // Se tiver imagem, adicionar instrução
+  if(temImagem){
+    resEl.textContent = promptTexto + '
+
+[IMAGEM ANEXADA — cole a imagem junto com este texto no Claude para análise completa]';
+    // Copiar automaticamente para facilitar
+  }
+
+  // Salvar no histórico
+  if((v('pj-nos-time')||v('pj-adv-nome')) && cU){
+    supa.from('relatorios').insert({
+      user_id:cU.id, tipo:'clube',
+      nome:`${nos} x ${adv}`,
+      posicao:'Pré-jogo',
+      dados:{nos,adv,comp:v('pj-comp'),local:v('pj-local'),form:v('pj-nos-form')},
+      relatorio_ia:promptTexto
+    }).then(()=>{});
+  }
+
+  showToast('✓ Plano gerado! Copie e cole no Claude.');
+}
+
 // ===== BOLA PARADA =====
 let bpFoco = 'proprio';
 let bpPadroes = {'e-pad-of':[],'e-pad-def':[],'f-pad-of':[],'f-pad-def':[],'l-pad-of':[],'l-pad-def':[]};
@@ -2578,6 +3052,7 @@ Use terminologia técnica do futebol brasileiro. Tom profissional para comissão
 // Inicializar padrões
 window.addEventListener('DOMContentLoaded',()=>{
   Object.keys(bpPadroes).forEach(k=>renderPadroes(k));
+  renderJogadores();
 });
 
 // ===== DASHBOARD =====
