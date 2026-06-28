@@ -1908,166 +1908,324 @@ function selPChip(el,hid,val){
 
 // METRICAS POR POSICAO
 var METS = {
+
   'Goleiro':{g:[
-    {t:'Defesa',c:[
-      {id:'a-def',l:'Defesas',tip:'Total de defesas.'},
-      {id:'a-defpct',l:'Defesas (%)',tip:'% de chutes defendidos.'},
-      {id:'a-xga',l:'xGA',s:'0.01',tip:'Expected Goals Against.'},
+    {t:'Defesa direta',c:[
+      {id:'a-def',l:'Defesas totais',tip:'Total de defesas no período.'},
+      {id:'a-defpct',l:'Defesas (%)',tip:'Percentual de chutes defendidos. Média elite: 70-80%.'},
+      {id:'a-xga',l:'xGA',s:'0.01',tip:'Expected Goals Against. Gols esperados sofridos conforme qualidade dos chutes.'},
       {id:'a-gols-s',l:'Gols sofridos',tip:'Total de gols sofridos.'},
-      {id:'a-said',l:'Saídas de área',tip:'Vezes que saiu da área.'}
+      {id:'a-gols-evit',l:'Gols evitados (PSxG-GA)',s:'0.01',tip:'Post-Shot xG menos gols sofridos. Positivo = goleiro acima da média.'},
+      {id:'a-chutes-alvo',l:'Chutes no alvo enfrentados',tip:'Volume de trabalho defensivo real.'}
+    ]},
+    {t:'Saídas e área',c:[
+      {id:'a-said',l:'Saídas de área',tip:'Vezes que saiu da área para interceptar.'},
+      {id:'a-said-suc',l:'Saídas bem-sucedidas (%)',tip:'% das saídas que resultaram em posse mantida.'},
+      {id:'a-high-cl',l:'High claims (bolas aéreas dominadas)',tip:'Bolas altas dominadas com segurança.'},
+      {id:'a-socos',l:'Socos/Desvios',tip:'Situações de bola aérea em que optou por desviar.'}
     ]},
     {t:'Jogo com os pés',c:[
-      {id:'a-paspct',l:'Passes certos (%)',tip:'Ex: 82%'},
-      {id:'a-paslong',l:'Passes longos (%)',tip:'Eficiência nos lançamentos.'},
-      {id:'a-toques',l:'Toques/jogo',tip:'Média de toques por partida.'}
+      {id:'a-paspct',l:'Passes certos (%)',tip:'Eficiência de distribuição. Média elite: 80-90%.'},
+      {id:'a-paslong',l:'Passes longos (%)',tip:'Eficiência nos lançamentos longos.'},
+      {id:'a-pasprog',l:'Passes progressivos',tip:'Passes que avançam o jogo mais de 10m.'},
+      {id:'a-toques',l:'Toques por jogo',tip:'Envolvimento no jogo com os pés.'},
+      {id:'a-lancamentos',l:'Lançamentos longos',tip:'Passes acima de 40m. Relevante para construção direta.'},
+      {id:'a-dist-distrib',l:'Distância média de distribuição (m)',s:'0.1',tip:'Preferência por jogo curto ou longo.'}
+    ]},
+    {t:'Pressão e sweeping',c:[
+      {id:'a-sweep',l:'Ações fora da área',tip:'Intervenções além da área como sweeper keeper.'},
+      {id:'a-pressao-def',l:'% sob pressão — passes certos',tip:'Eficiência ao distribuir quando pressionado.'},
+      {id:'a-opa',l:'OPA (Ações fora da área por 90min)',s:'0.01',tip:'Métrica de sweeping keeper. Média Premier League: 1.5.'}
     ]}
-  ],obs:'Observe: saídas de área, comunicação com a zaga, distribuição sob pressão.'},
+  ],obs:'Observe: liderança da linha defensiva, comunicação, tomada de decisão sob pressão, qualidade do jogo com os pés em sistemas de construção curta.'},
 
   'Zagueiro':{g:[
     {t:'Defesa',c:[
-      {id:'a-duel',l:'Duelos terrestres (%)',tip:'% disputas no chão vencidas.'},
-      {id:'a-aer',l:'Duelos aéreos (%)',tip:'% disputas aéreas vencidas.'},
-      {id:'a-int',l:'Interceptações',tip:'Reflete leitura antecipatória.'},
-      {id:'a-cort',l:'Cortes',tip:'Afastamentos de bola.'},
-      {id:'a-bloq',l:'Bloqueios de chute',tip:'Indica posicionamento defensivo.'}
+      {id:'a-duel',l:'Duelos terrestres (%)',tip:'Percentual de duelos no chão vencidos. Referência elite: 60%+.'},
+      {id:'a-aer',l:'Duelos aéreos (%)',tip:'Percentual de duelos aéreos vencidos. Referência elite: 65%+.'},
+      {id:'a-int',l:'Interceptações por 90min',s:'0.01',tip:'Leitura antecipatória do jogo. Referência elite: 2.5+.'},
+      {id:'a-cort',l:'Cortes por 90min',s:'0.01',tip:'Afastamentos de bola.'},
+      {id:'a-bloq',l:'Bloqueios de chute',tip:'Indica posicionamento defensivo correto.'},
+      {id:'a-pressoes',l:'Pressões realizadas',tip:'Quantas vezes pressionou o adversário.'},
+      {id:'a-drib-enf',l:'Dribles enfrentados',tip:'Volume de situações 1x1 defensivas.'},
+      {id:'a-drib-sup',l:'Dribles sofridos',tip:'Quantas vezes foi superado no 1x1. Menor = melhor.'},
+      {id:'a-erros-xg',l:'Erros que levaram a finalizações',tip:'Indicator de risco. Quanto menor, melhor.'}
     ]},
     {t:'Construção',c:[
-      {id:'a-paspct',l:'Passes certos (%)',tip:'Ex: 91%'},
-      {id:'a-pasprog',l:'Passes progressivos',tip:'Passes que avançam o jogo.'},
-      {id:'a-vel',l:'Vel. máxima (km/h)',s:'0.1',tip:'Relevante para linha alta.'}
+      {id:'a-paspct',l:'Passes certos (%)',tip:'Referência zagueiro de construção: 90%+.'},
+      {id:'a-pasprog',l:'Passes progressivos por 90min',s:'0.01',tip:'Passes que avançam o jogo para terço final. Referência: 4+.'},
+      {id:'a-paslong',l:'Passes longos (%)',tip:'Eficiência nos lançamentos. Importante para sistemas diretos.'},
+      {id:'a-chancesc',l:'Chances criadas',tip:'Situações de gol geradas a partir da defesa.'},
+      {id:'a-carries',l:'Conduções progressivas',tip:'Vezes que avançou com a bola. Indicador de zagueiro moderno.'},
+      {id:'a-dist-carry',l:'Distância em conduções (m)',s:'0.1',tip:'Volume de avanço com a bola nos pés.'},
+      {id:'a-tercfin',l:'Entradas no terço final',tip:'Zagueiros de construção modernos invadem o campo adversário.'}
+    ]},
+    {t:'Físico',c:[
+      {id:'a-vel',l:'Vel. máxima (km/h)',s:'0.1',tip:'Crítica para linha alta. Referência elite: 33km/h+.'},
+      {id:'a-dist',l:'Distância total (km)',s:'0.1',tip:'Volume de trabalho no período.'},
+      {id:'a-sprint-n',l:'Número de sprints',tip:'Esforços máximos. Relevante para linhas altas.'}
     ]}
-  ],obs:'Observe: posicionamento na linha, comunicação com o parceiro, saída de bola.'},
+  ],obs:'Observe: posicionamento na linha defensiva, comunicação com parceiro, timing das saídas, liderança na saída de bola sob pressão.'},
 
   'Lateral direito':{g:[
     {t:'Defesa',c:[
       {id:'a-duel',l:'Duelos defensivos (%)',tip:'% duelos defensivos vencidos.'},
-      {id:'a-int',l:'Interceptações',tip:'Passes cortados na zona.'},
-      {id:'a-recup',l:'Recuperações',tip:'Total de recuperações.'},
-      {id:'a-spr',l:'Sprints defensivos',tip:'Sprints de retorno.'}
+      {id:'a-aer',l:'Duelos aéreos (%)',tip:'% duelos aéreos vencidos.'},
+      {id:'a-int',l:'Interceptações por 90min',s:'0.01',tip:'Capacidade de ler o jogo e cortar passes.'},
+      {id:'a-recup',l:'Recuperações de bola',tip:'Total de recuperações.'},
+      {id:'a-drib-sup',l:'Dribles sofridos',tip:'Quantas vezes foi superado. Menor = melhor.'},
+      {id:'a-pressoes',l:'Pressões realizadas',tip:'Intensidade defensiva aplicada.'},
+      {id:'a-spr',l:'Sprints defensivos',tip:'Sprints de retorno para cobrir o espaço.'}
     ]},
     {t:'Ataque',c:[
-      {id:'a-cruz',l:'Cruzamentos certos (%)',tip:'% cruzamentos que chegaram.'},
-      {id:'a-assis',l:'Assistências',tip:'Passes para gol.'},
-      {id:'a-chances',l:'Chances criadas',tip:'Situações de finalização.'},
-      {id:'a-drok',l:'Dribles completados',tip:'Capacidade de criar superioridade.'},
-      {id:'a-dist',l:'Distância total (km)',s:'0.1',tip:'Volume físico.'},
-      {id:'a-vel',l:'Vel. máxima (km/h)',s:'0.1',tip:'Fundamental para laterais ofensivos.'}
+      {id:'a-cruz',l:'Cruzamentos (%)',tip:'% cruzamentos que chegaram ao destino. Referência: 25-35%.'},
+      {id:'a-cruz-tot',l:'Cruzamentos tentados',tip:'Volume de cruzamentos. Perfil ofensivo usa mais.'},
+      {id:'a-assis',l:'Assistências',tip:'Passes diretos para gol.'},
+      {id:'a-assis-esp',l:'Assistências esperadas (xA)',s:'0.01',tip:'Qualidade das chances criadas via passes.'},
+      {id:'a-chances',l:'Chances criadas por 90min',s:'0.01',tip:'Situações de finalização criadas.'},
+      {id:'a-drok',l:'Dribles completados',tip:'Capacidade de criar superioridade no corredor.'},
+      {id:'a-over',l:'Sobreposições bem-sucedidas',tip:'Sobreposições que resultaram em posse no terço final.'},
+      {id:'a-gols',l:'Gols',tip:'Gols marcados no período.'},
+      {id:'a-xg',l:'xG (Expected Goals)',s:'0.01',tip:'Qualidade das finalizações.'}
+    ]},
+    {t:'Físico',c:[
+      {id:'a-dist',l:'Distância total (km)',s:'0.1',tip:'Volume físico. Laterais elite percorrem 11-13km/jogo.'},
+      {id:'a-dist-ai',l:'Dist. alta intensidade (km)',s:'0.01',tip:'Acima de 19.8 km/h.'},
+      {id:'a-vel',l:'Vel. máxima (km/h)',s:'0.1',tip:'Fundamental para laterais ofensivos. Elite: 33km/h+.'},
+      {id:'a-sprint-n',l:'Número de sprints',tip:'Esforços máximos. Indicador de intensidade.'}
     ]}
-  ],obs:'Observe: timing das sobreposições, combinação com o ponta, retorno defensivo.'},
+  ],obs:'Observe: timing das sobreposições, combinação com o ponta, retorno defensivo, qualidade do cruzamento rasante vs lançado.'},
 
   'Lateral esquerdo':{g:[
     {t:'Defesa',c:[
       {id:'a-duel',l:'Duelos defensivos (%)',tip:'% duelos defensivos vencidos.'},
-      {id:'a-int',l:'Interceptações',tip:'Passes cortados.'},
-      {id:'a-recup',l:'Recuperações',tip:'Total de recuperações.'},
+      {id:'a-aer',l:'Duelos aéreos (%)',tip:'% duelos aéreos vencidos.'},
+      {id:'a-int',l:'Interceptações por 90min',s:'0.01',tip:'Capacidade de ler o jogo e cortar passes.'},
+      {id:'a-recup',l:'Recuperações de bola',tip:'Total de recuperações.'},
+      {id:'a-drib-sup',l:'Dribles sofridos',tip:'Quantas vezes foi superado. Menor = melhor.'},
+      {id:'a-pressoes',l:'Pressões realizadas',tip:'Intensidade defensiva aplicada.'},
       {id:'a-spr',l:'Sprints defensivos',tip:'Sprints de retorno.'}
     ]},
     {t:'Ataque',c:[
-      {id:'a-cruz',l:'Cruzamentos certos (%)',tip:'% cruzamentos que chegaram.'},
-      {id:'a-assis',l:'Assistências',tip:'Passes para gol.'},
-      {id:'a-chances',l:'Chances criadas',tip:'Situações de finalização.'},
-      {id:'a-drok',l:'Dribles completados',tip:'Dribles bem-sucedidos.'},
+      {id:'a-cruz',l:'Cruzamentos (%)',tip:'% cruzamentos que chegaram ao destino.'},
+      {id:'a-cruz-tot',l:'Cruzamentos tentados',tip:'Volume de cruzamentos.'},
+      {id:'a-assis',l:'Assistências',tip:'Passes diretos para gol.'},
+      {id:'a-assis-esp',l:'Assistências esperadas (xA)',s:'0.01',tip:'Qualidade das chances criadas.'},
+      {id:'a-chances',l:'Chances criadas por 90min',s:'0.01',tip:'Situações de finalização criadas.'},
+      {id:'a-drok',l:'Dribles completados',tip:'Capacidade de criar superioridade no corredor.'},
+      {id:'a-over',l:'Sobreposições bem-sucedidas',tip:'Sobreposições que resultaram em posse.'},
+      {id:'a-gols',l:'Gols',tip:'Gols marcados no período.'},
+      {id:'a-xg',l:'xG (Expected Goals)',s:'0.01',tip:'Qualidade das finalizações.'}
+    ]},
+    {t:'Físico',c:[
       {id:'a-dist',l:'Distância total (km)',s:'0.1',tip:'Volume físico.'},
-      {id:'a-vel',l:'Vel. máxima (km/h)',s:'0.1',tip:'Pico de velocidade.'}
+      {id:'a-dist-ai',l:'Dist. alta intensidade (km)',s:'0.01',tip:'Acima de 19.8 km/h.'},
+      {id:'a-vel',l:'Vel. máxima (km/h)',s:'0.1',tip:'Elite: 33km/h+.'},
+      {id:'a-sprint-n',l:'Número de sprints',tip:'Esforços máximos.'}
     ]}
-  ],obs:'Observe: timing das sobreposições, combinação com o ponta esquerdo.'},
+  ],obs:'Observe: timing das sobreposições, relação com o ponta esquerdo, retorno defensivo, uso do pé esquerdo em cruzamentos.'},
 
   'Volante':{g:[
     {t:'Defesa e recuperação',c:[
-      {id:'a-int',l:'Interceptações',tip:'Principal métrica defensiva.'},
-      {id:'a-duel',l:'Duelos ganhos (%)',tip:'% disputas no meio-campo.'},
-      {id:'a-recup',l:'Recuperações',tip:'Inclui roubadas e segundas bolas.'},
-      {id:'a-spr',l:'Sprints defensivos',tip:'Para fechar espaços.'}
+      {id:'a-int',l:'Interceptações por 90min',s:'0.01',tip:'Principal métrica do volante defensivo. Referência elite: 4+.'},
+      {id:'a-duel',l:'Duelos ganhos (%)',tip:'% disputas vencidas. Referência elite: 55%+.'},
+      {id:'a-recup',l:'Recuperações de bola',tip:'Total de recuperações. Mede atividade defensiva.'},
+      {id:'a-bloq',l:'Bloqueios de chute',tip:'Indica organização defensiva.'},
+      {id:'a-pressoes',l:'Pressões por 90min',s:'0.01',tip:'PPDA individual. Intensidade do pressing.'},
+      {id:'a-press-suc',l:'Pressões bem-sucedidas (%)',tip:'% das pressões que resultaram em recuperação.'},
+      {id:'a-drib-sup',l:'Dribles sofridos',tip:'Quantas vezes foi superado. Crítico para volante.'},
+      {id:'a-err-passe',l:'Erros que geraram perigo',tip:'Turnovers em zonas perigosas.'},
+      {id:'a-cobert',l:'Coberturas defensivas',tip:'Situações em que cobriu companheiro em desvantagem.'}
     ]},
-    {t:'Construção',c:[
-      {id:'a-paspct',l:'Passes em pressão (%)',tip:'% passes completados pressionado.'},
-      {id:'a-pasprog',l:'Passes progressivos',tip:'Para volante de ligação.'},
-      {id:'a-paschv',l:'Passes chave',tip:'Passes que geram finalizações.'},
-      {id:'a-dist',l:'Distância total (km)',s:'0.1',tip:'Box-to-box passam de 12km.'}
+    {t:'Construção e progressão',c:[
+      {id:'a-paspct',l:'Passes certos (%)',tip:'Referência volante de construção: 88%+.'},
+      {id:'a-pasprog',l:'Passes progressivos por 90min',s:'0.01',tip:'Passes que avançam o jogo. Referência elite: 5+.'},
+      {id:'a-paspress',l:'Passes sob pressão (%)',tip:'Eficiência ao distribuir quando marcado. Indicador de qualidade.'},
+      {id:'a-chancesc',l:'Chances criadas',tip:'Situações de gol originadas pelo volante.'},
+      {id:'a-carries',l:'Conduções progressivas',tip:'Avanços com a bola. Relevante para volante box-to-box.'},
+      {id:'a-tercfin',l:'Entradas no terço final',tip:'Chegadas à área adversária. Perfil box-to-box.'},
+      {id:'a-assis',l:'Assistências',tip:'Passes diretos para gol.'},
+      {id:'a-assis-esp',l:'xA (Assist. esperadas)',s:'0.01',tip:'Qualidade dos passes de criação.'}
+    ]},
+    {t:'Físico',c:[
+      {id:'a-dist',l:'Distância total (km)',s:'0.1',tip:'Volante box-to-box percorre 12-14km/jogo na elite.'},
+      {id:'a-dist-ai',l:'Dist. alta intensidade (km)',s:'0.01',tip:'Acima de 19.8 km/h.'},
+      {id:'a-sprint-n',l:'Número de sprints',tip:'Esforços máximos. Box-to-box: volume alto.'},
+      {id:'a-vel',l:'Vel. máxima (km/h)',s:'0.1',tip:'Relevante para volantes de recuperação rápida.'},
+      {id:'a-acel',l:'Acelerações',tip:'Esforços neuromusculares. Indica carga real.'}
     ]}
-  ],obs:'Observe: posicionamento entre as linhas, velocidade de decisão, pressing após perda.'},
+  ],obs:'Observe: posicionamento entre linhas, capacidade de cobrir espaços, transição defesa-ataque, distribuição sob pressão do adversário.'},
 
   'Meia central':{g:[
-    {t:'Criação',c:[
-      {id:'a-paschv',l:'Passes chave/jogo',tip:'Principal métrica do armador.'},
-      {id:'a-chances',l:'Chances criadas',tip:'Situações de gol geradas.'},
-      {id:'a-assis',l:'Assistências',tip:'Passes para gol.'},
-      {id:'a-paspct',l:'Passes certos (%)',tip:'Ex: 89%'},
-      {id:'a-pasprog',l:'Passes progressivos',tip:'Participação na construção.'},
-      {id:'a-drok',l:'Dribles completados',tip:'Ferramenta de progressão.'}
+    {t:'Criação e progressão',c:[
+      {id:'a-pasprog',l:'Passes progressivos por 90min',s:'0.01',tip:'Principal métrica do meia. Referência elite: 7+.'},
+      {id:'a-paspct',l:'Passes certos (%)',tip:'Referência meia criativo: 85%+.'},
+      {id:'a-chancesc',l:'Chances criadas por 90min',s:'0.01',tip:'Situações de finalização geradas. Referência elite: 2+.'},
+      {id:'a-passes-chave',l:'Passes-chave por 90min',s:'0.01',tip:'Passes que geram diretamente uma finalização.'},
+      {id:'a-assis',l:'Assistências',tip:'Passes diretos para gol.'},
+      {id:'a-assis-esp',l:'xA por 90min',s:'0.01',tip:'Assists esperados. Qualidade dos passes de criação.'},
+      {id:'a-carries',l:'Conduções progressivas',tip:'Avanços com a bola que criam desequilíbrio.'},
+      {id:'a-drok',l:'Dribles completados',tip:'Capacidade de criar superioridade no meio.'},
+      {id:'a-paspress',l:'Passes sob pressão (%)',tip:'Qualidade técnica sob marcação adversária.'},
+      {id:'a-tercfin',l:'Entradas no terço final',tip:'Penetrações na área de criação do adversário.'}
     ]},
-    {t:'Defesa',c:[
-      {id:'a-recup',l:'Recuperações',tip:'Mesmo o armador precisa recuperar.'},
-      {id:'a-duel',l:'Duelos ganhos (%)',tip:'Eficiência nas disputas.'},
-      {id:'a-dist',l:'Distância total (km)',s:'0.1',tip:'Alta intensidade passa de 11km.'}
+    {t:'Finalização',c:[
+      {id:'a-gols',l:'Gols',tip:'Gols marcados. Meias de elite chegam ao gol.'},
+      {id:'a-xg',l:'xG por 90min',s:'0.01',tip:'Qualidade das chances de finalização geradas.'},
+      {id:'a-fin',l:'Finalizações totais',tip:'Volume de chutes.'},
+      {id:'a-fin-alvo',l:'Finalizações no alvo (%)',tip:'Precisão nas finalizações.'},
+      {id:'a-npxg',l:'npxG (sem pênaltis)',s:'0.01',tip:'Expected Goals excluindo pênaltis. Mais preciso para avaliar o finalizador.'}
+    ]},
+    {t:'Defesa e recuperação',c:[
+      {id:'a-recup',l:'Recuperações de bola',tip:'Contribuição defensiva do meia.'},
+      {id:'a-int',l:'Interceptações',tip:'Leitura defensiva do jogo.'},
+      {id:'a-pressoes',l:'Pressões realizadas',tip:'Intensidade do pressing ofensivo.'},
+      {id:'a-press-suc',l:'Pressões bem-sucedidas (%)',tip:'Eficiência do pressing.'}
+    ]},
+    {t:'Físico',c:[
+      {id:'a-dist',l:'Distância total (km)',s:'0.1',tip:'Meias de alto nível percorrem 11-13km/jogo.'},
+      {id:'a-dist-ai',l:'Dist. alta intensidade (km)',s:'0.01',tip:'Acima de 19.8 km/h.'},
+      {id:'a-sprint-n',l:'Número de sprints',tip:'Esforços máximos no período.'}
     ]}
-  ],obs:'Observe: movimento sem bola, velocidade de leitura, qualidade do primeiro toque.'},
+  ],obs:'Observe: posicionamento entre linhas, capacidade de receber de costas, timing das corridas, visão de jogo e qualidade do passe final.'},
 
   'Meia-atacante':{g:[
-    {t:'Criação e finalização',c:[
-      {id:'a-assis',l:'Assistências',tip:'Métrica central do meia-atacante.'},
-      {id:'a-chances',l:'Chances criadas',tip:'Situações geradas.'},
-      {id:'a-drok',l:'Dribles completados',tip:'Arma fundamental do camisa 10.'},
-      {id:'a-drtent',l:'Dribles tentados',tip:'Total de tentativas.'},
-      {id:'a-gols',l:'Gols',tip:'O meia-atacante também finaliza.'},
-      {id:'a-xg',l:'xG',s:'0.01',tip:'Qualidade das chances geradas.'},
-      {id:'a-fintot',l:'Finalizações totais',tip:'Volume de chutes.'}
+    {t:'Criação',c:[
+      {id:'a-chancesc',l:'Chances criadas por 90min',s:'0.01',tip:'Principal métrica do meia-atacante. Referência elite: 3+.'},
+      {id:'a-assis',l:'Assistências',tip:'Passes diretos para gol.'},
+      {id:'a-assis-esp',l:'xA por 90min',s:'0.01',tip:'Qualidade dos passes de criação.'},
+      {id:'a-passes-chave',l:'Passes-chave por 90min',s:'0.01',tip:'Passes que geram diretamente uma finalização.'},
+      {id:'a-drok',l:'Dribles completados',tip:'Capacidade de criar situações de perigo.'},
+      {id:'a-drok-pct',l:'Dribles (%)',tip:'Eficiência nos dribles tentados.'},
+      {id:'a-carries',l:'Conduções progressivas',tip:'Avanços com a bola que criam desequilíbrio.'},
+      {id:'a-pasprog',l:'Passes progressivos',tip:'Passes que avançam o jogo.'}
     ]},
-    {t:'Defesa',c:[
-      {id:'a-recup',l:'Recuperações pelo pressing',tip:'Pelo pressing alto.'},
-      {id:'a-dist',l:'Distância total (km)',s:'0.1',tip:'Trabalha defensivamente.'}
+    {t:'Finalização',c:[
+      {id:'a-gols',l:'Gols',tip:'Gols marcados. Meias-atacantes de elite chegam ao gol.'},
+      {id:'a-xg',l:'xG por 90min',s:'0.01',tip:'Qualidade das oportunidades geradas.'},
+      {id:'a-npxg',l:'npxG por 90min',s:'0.01',tip:'Expected Goals sem pênaltis.'},
+      {id:'a-fin',l:'Finalizações totais',tip:'Volume de chutes.'},
+      {id:'a-fin-alvo',l:'Finalizações no alvo (%)',tip:'Precisão nas finalizações.'},
+      {id:'a-touch-area',l:'Toques na área adversária',tip:'Presença dentro da área. Indica ameaça real.'}
+    ]},
+    {t:'Pressão e defensivo',c:[
+      {id:'a-pressoes',l:'Pressões realizadas',tip:'Intensidade do pressing ofensivo.'},
+      {id:'a-press-suc',l:'Pressões bem-sucedidas (%)',tip:'Eficiência do pressing. Indicador de comprometimento tático.'},
+      {id:'a-recup',l:'Recuperações no campo adversário',tip:'Recuperações no terço ofensivo. Gegenpressing.'}
+    ]},
+    {t:'Físico',c:[
+      {id:'a-dist',l:'Distância total (km)',s:'0.1',tip:'Volume de trabalho.'},
+      {id:'a-dist-ai',l:'Dist. alta intensidade (km)',s:'0.01',tip:'Acima de 19.8 km/h.'},
+      {id:'a-vel',l:'Vel. máxima (km/h)',s:'0.1',tip:'Relevante para meias que exploram profundidade.'}
     ]}
-  ],obs:'Observe: movimentação entre linhas, decisão entre finalizar ou assistir.'},
+  ],obs:'Observe: movimentação entre linhas, capacidade de receber virado para o gol, combinações rápidas em espaços reduzidos, pressing de alta qualidade.'},
 
   'Ponta direita':{g:[
-    {t:'Desequilíbrio',c:[
-      {id:'a-drok',l:'Dribles completados',tip:'Métrica de desequilíbrio individual.'},
-      {id:'a-drtent',l:'Dribles tentados',tip:'Eficiência ideal acima de 45%.'},
-      {id:'a-cruz',l:'Cruzamentos certos (%)',tip:'Para pontas tradicionais.'},
-      {id:'a-assis',l:'Assistências',tip:'Passes para gol.'},
-      {id:'a-chances',l:'Chances criadas',tip:'Situações geradas.'}
+    {t:'Criação e drible',c:[
+      {id:'a-drok',l:'Dribles completados por 90min',s:'0.01',tip:'Métrica central do ponta. Referência elite: 3+.'},
+      {id:'a-drok-pct',l:'Dribles (%)',tip:'Eficiência nos dribles tentados. Elite: 50%+.'},
+      {id:'a-chancesc',l:'Chances criadas por 90min',s:'0.01',tip:'Situações de gol geradas.'},
+      {id:'a-assis',l:'Assistências',tip:'Passes diretos para gol.'},
+      {id:'a-assis-esp',l:'xA por 90min',s:'0.01',tip:'Qualidade dos passes de criação.'},
+      {id:'a-carries',l:'Conduções progressivas',tip:'Avanços com a bola que criam desequilíbrio.'},
+      {id:'a-cruz',l:'Cruzamentos (%)',tip:'Eficiência em cruzamentos. Relevante para pontas que cruzam.'},
+      {id:'a-passes-chave',l:'Passes-chave por 90min',s:'0.01',tip:'Passes que geram diretamente uma finalização.'}
     ]},
-    {t:'Finalização e físico',c:[
-      {id:'a-gols',l:'Gols',tip:'Mais relevante para pontas invertidos.'},
-      {id:'a-xg',l:'xG',s:'0.01',tip:'Qualidade das chances.'},
-      {id:'a-vel',l:'Vel. máxima (km/h)',s:'0.1',tip:'Acima de 33 km/h é referência.'},
-      {id:'a-spr',l:'Número de sprints',tip:'Pontas de velocidade têm alto volume.'}
+    {t:'Finalização',c:[
+      {id:'a-gols',l:'Gols',tip:'Gols marcados. Pontas modernos finalizam muito.'},
+      {id:'a-xg',l:'xG por 90min',s:'0.01',tip:'Qualidade das finalizações.'},
+      {id:'a-npxg',l:'npxG por 90min',s:'0.01',tip:'Expected Goals sem pênaltis.'},
+      {id:'a-fin',l:'Finalizações totais',tip:'Volume de chutes.'},
+      {id:'a-fin-alvo',l:'Finalizações no alvo (%)',tip:'Precisão. Referência elite: 35%+.'},
+      {id:'a-touch-area',l:'Toques na área adversária',tip:'Presença dentro da área.'}
+    ]},
+    {t:'Pressão e defesa',c:[
+      {id:'a-pressoes',l:'Pressões realizadas',tip:'Contribuição defensiva do ponta. Pressão alta.'},
+      {id:'a-press-suc',l:'Pressões bem-sucedidas (%)',tip:'Eficiência do pressing.'},
+      {id:'a-recup',l:'Recuperações no campo adversário',tip:'Gegenpressing.'}
+    ]},
+    {t:'Físico',c:[
+      {id:'a-vel',l:'Vel. máxima (km/h)',s:'0.1',tip:'Fundamental para ponta. Elite: 34km/h+.'},
+      {id:'a-dist',l:'Distância total (km)',s:'0.1',tip:'Volume de trabalho.'},
+      {id:'a-dist-ai',l:'Dist. alta intensidade (km)',s:'0.01',tip:'Acima de 19.8 km/h.'},
+      {id:'a-sprint-n',l:'Número de sprints',tip:'Esforços máximos. Pontas de velocidade: volume alto.'},
+      {id:'a-acel',l:'Acelerações',tip:'Explosão em espaços curtos.'}
     ]}
-  ],obs:'Observe: primeiro gesto no drible, movimento de ruptura, pressing sem bola.'},
+  ],obs:'Observe: movimentação sem bola, qualidade do corte para dentro, uso do pé esquerdo, pressing de qualidade, timing das corridas em profundidade.'},
 
   'Ponta esquerda':{g:[
-    {t:'Desequilíbrio',c:[
-      {id:'a-drok',l:'Dribles completados',tip:'Métrica de impacto individual.'},
-      {id:'a-drtent',l:'Dribles tentados',tip:'Eficiência ideal acima de 45%.'},
-      {id:'a-cruz',l:'Cruzamentos certos (%)',tip:'Para pontas tradicionais.'},
-      {id:'a-assis',l:'Assistências',tip:'Passes para gol.'},
-      {id:'a-chances',l:'Chances criadas',tip:'Situações geradas.'}
+    {t:'Criação e drible',c:[
+      {id:'a-drok',l:'Dribles completados por 90min',s:'0.01',tip:'Métrica central do ponta. Referência elite: 3+.'},
+      {id:'a-drok-pct',l:'Dribles (%)',tip:'Eficiência nos dribles tentados. Elite: 50%+.'},
+      {id:'a-chancesc',l:'Chances criadas por 90min',s:'0.01',tip:'Situações de gol geradas.'},
+      {id:'a-assis',l:'Assistências',tip:'Passes diretos para gol.'},
+      {id:'a-assis-esp',l:'xA por 90min',s:'0.01',tip:'Qualidade dos passes de criação.'},
+      {id:'a-carries',l:'Conduções progressivas',tip:'Avanços com a bola.'},
+      {id:'a-cruz',l:'Cruzamentos (%)',tip:'Eficiência em cruzamentos.'},
+      {id:'a-passes-chave',l:'Passes-chave por 90min',s:'0.01',tip:'Passes que geram diretamente uma finalização.'}
     ]},
-    {t:'Finalização e físico',c:[
-      {id:'a-gols',l:'Gols',tip:'Relevante para pontas invertidos.'},
-      {id:'a-xg',l:'xG',s:'0.01',tip:'Qualidade das chances.'},
-      {id:'a-vel',l:'Vel. máxima (km/h)',s:'0.1',tip:'Essencial para pontas de velocidade.'},
-      {id:'a-spr',l:'Número de sprints',tip:'Volume de esforços máximos.'}
+    {t:'Finalização',c:[
+      {id:'a-gols',l:'Gols',tip:'Gols marcados.'},
+      {id:'a-xg',l:'xG por 90min',s:'0.01',tip:'Qualidade das finalizações.'},
+      {id:'a-npxg',l:'npxG por 90min',s:'0.01',tip:'Expected Goals sem pênaltis.'},
+      {id:'a-fin',l:'Finalizações totais',tip:'Volume de chutes.'},
+      {id:'a-fin-alvo',l:'Finalizações no alvo (%)',tip:'Precisão. Referência elite: 35%+.'},
+      {id:'a-touch-area',l:'Toques na área adversária',tip:'Presença dentro da área.'}
+    ]},
+    {t:'Pressão e defesa',c:[
+      {id:'a-pressoes',l:'Pressões realizadas',tip:'Contribuição defensiva.'},
+      {id:'a-press-suc',l:'Pressões bem-sucedidas (%)',tip:'Eficiência do pressing.'},
+      {id:'a-recup',l:'Recuperações no campo adversário',tip:'Gegenpressing.'}
+    ]},
+    {t:'Físico',c:[
+      {id:'a-vel',l:'Vel. máxima (km/h)',s:'0.1',tip:'Fundamental para ponta. Elite: 34km/h+.'},
+      {id:'a-dist',l:'Distância total (km)',s:'0.1',tip:'Volume de trabalho.'},
+      {id:'a-dist-ai',l:'Dist. alta intensidade (km)',s:'0.01',tip:'Acima de 19.8 km/h.'},
+      {id:'a-sprint-n',l:'Número de sprints',tip:'Esforços máximos.'},
+      {id:'a-acel',l:'Acelerações',tip:'Explosão em espaços curtos.'}
     ]}
-  ],obs:'Observe: primeiro gesto, movimento de ruptura, decisão entre cruzar ou cortar.'},
+  ],obs:'Observe: movimentação sem bola, corte para dentro, uso do pé direito, pressing de qualidade, timing das corridas.'},
 
   'Centroavante':{g:[
     {t:'Finalização',c:[
-      {id:'a-gols',l:'Gols',tip:'Sempre analisar com xG.'},
-      {id:'a-xg',l:'xG',s:'0.01',tip:'Se gols > xG está finalizando acima do esperado.'},
-      {id:'a-fintot',l:'Finalizações totais',tip:'Volume de chutes.'},
-      {id:'a-finalv',l:'Finalizações no alvo',tip:'Eficiência ideal acima de 40%.'},
-      {id:'a-golscab',l:'Gols de cabeça',tip:'Fundamental para referência aérea.'}
+      {id:'a-gols',l:'Gols',tip:'Métrica central do centroavante.'},
+      {id:'a-xg',l:'xG por 90min',s:'0.01',tip:'Qualidade das finalizações. Referência elite: 0.5+.'},
+      {id:'a-npxg',l:'npxG por 90min',s:'0.01',tip:'Expected Goals sem pênaltis. Mais preciso.'},
+      {id:'a-xgop',l:'xG overperformance',s:'0.01',tip:'Gols menos xG. Positivo indica finalizador acima da média.'},
+      {id:'a-fin',l:'Finalizações totais por 90min',s:'0.01',tip:'Volume de chutes. Elite: 3+.'},
+      {id:'a-fin-alvo',l:'Finalizações no alvo (%)',tip:'Precisão. Referência elite: 40%+.'},
+      {id:'a-touch-area',l:'Toques na área adversária',tip:'Presença dentro da área. Métrica de ameaça real.'},
+      {id:'a-gols-cab',l:'Gols de cabeça',tip:'Capacidade aérea ofensiva.'},
+      {id:'a-gols-pe-d',l:'Gols pé direito',tip:'Volume de gols com o pé dominante.'},
+      {id:'a-gols-pe-e',l:'Gols pé esquerdo',tip:'Uso do pé não dominante. Finalizadores ambidestros.'}
     ]},
-    {t:'Domínio e coletivo',c:[
-      {id:'a-aer',l:'Duelos aéreos (%)',tip:'Essencial para referência aérea.'},
-      {id:'a-duel',l:'Duelos terrestres (%)',tip:'Inclui proteção de bola.'},
-      {id:'a-assis',l:'Assistências',tip:'O CA que combina também cria.'},
-      {id:'a-recup',l:'Recuperações pelo pressing',tip:'Pelo pressing na saída adversária.'},
-      {id:'a-dist',l:'Distância total (km)',s:'0.1',tip:'CA modernos trabalham fora da área.'}
+    {t:'Criação e associação',c:[
+      {id:'a-assis',l:'Assistências',tip:'Gols criados para companheiros.'},
+      {id:'a-assis-esp',l:'xA por 90min',s:'0.01',tip:'Qualidade dos passes de criação.'},
+      {id:'a-chancesc',l:'Chances criadas',tip:'Situações de gol criadas pelo CA.'},
+      {id:'a-hold',l:'Proteção de bola (hold-up)',tip:'Recepções de costas com manutenção da posse. Pivô.'},
+      {id:'a-carries',l:'Conduções progressivas',tip:'Avanços com a bola que criam desequilíbrio.'}
+    ]},
+    {t:'Aéreo e duelos',c:[
+      {id:'a-aer',l:'Duelos aéreos (%)',tip:'% disputas aéreas vencidas. Referência CA tradicional: 55%+.'},
+      {id:'a-duel',l:'Duelos terrestres (%)',tip:'% disputas no chão vencidas.'},
+      {id:'a-drok',l:'Dribles completados',tip:'Capacidade de escapar da marcação.'}
+    ]},
+    {t:'Pressão e defensivo',c:[
+      {id:'a-pressoes',l:'Pressões realizadas',tip:'Contribuição no pressing ofensivo. Muito valorizado no futebol moderno.'},
+      {id:'a-press-suc',l:'Pressões bem-sucedidas (%)',tip:'CA que pressiona bem vale mais para times de pressing alto.'},
+      {id:'a-dist-press',l:'Distância de pressão (m)',s:'0.1',tip:'Distância média do CA ao adversário ao pressionar.'}
+    ]},
+    {t:'Físico',c:[
+      {id:'a-dist',l:'Distância total (km)',s:'0.1',tip:'CA modernos percorrem 10-12km/jogo.'},
+      {id:'a-vel',l:'Vel. máxima (km/h)',s:'0.1',tip:'CAs de velocidade: 33km/h+. Pivôs: menos relevante.'},
+      {id:'a-sprint-n',l:'Número de sprints',tip:'Esforços máximos. CAs de profundidade: volume alto.'},
+      {id:'a-acel',l:'Acelerações',tip:'Explosão nas corridas de ruptura.'}
     ]}
-  ],obs:'Observe: timing das corridas, posicionamento nos cruzamentos, proteção de bola.'}
-};;
+  ],obs:'Observe: movimentação sem bola, timing das corridas de ruptura, qualidade na finalização com espaço e sem espaço, liderança da linha ofensiva, combinação com as pontas.'}
+
+};
+;
 
 
 function onPosA(){
