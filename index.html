@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Potencial Sports — Análise de Desempenho IA</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
 
@@ -126,8 +127,8 @@ header{background:var(--bg-sb);border-bottom:0.5px solid var(--b1);padding:0 22p
 .stitle{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--v);margin-bottom:12px;display:flex;align-items:center;gap:6px;padding-bottom:10px;border-bottom:0.5px solid var(--b1);}
 
 /* ── TOOLTIP ── */
-.ti{display:inline-flex;align-items:center;justify-content:center;width:13px;height:13px;background:var(--b2);border-radius:50%;font-size:8px;color:var(--t4);cursor:help;flex-shrink:0;position:relative;font-style:normal;}
-.ti:hover .tb{display:block;}
+.tooltip-icon{display:inline-flex;align-items:center;justify-content:center;width:13px;height:13px;background:var(--b2);border-radius:50%;font-size:8px;color:var(--t4);cursor:help;flex-shrink:0;position:relative;font-style:normal;}
+.tooltip-icon:hover .tb{display:block;}
 .tip-icon{display:inline-flex;align-items:center;justify-content:center;width:13px;height:13px;background:var(--b2);border-radius:50%;font-size:8px;color:var(--t4);cursor:help;flex-shrink:0;position:relative;font-style:normal;}
 .tip-icon:hover .tip-box{display:block;}
 .tb,.tip-box{display:none;position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#1c1c1c;border:0.5px solid var(--b3);border-radius:6px;padding:7px 10px;font-size:11px;color:#b0b0b0;line-height:1.5;white-space:normal;width:200px;z-index:99;font-weight:400;text-transform:none;letter-spacing:0;}
@@ -1649,7 +1650,7 @@ input[type=range]{flex:1;accent-color:var(--v);height:3px;}
           </select>
         </div>
         <div class="fgrp"><label class="flbl">Trabalha com</label>
-          <select class="fsel" id="fb-contexto">
+          <select class="fsel" id="fb-contexto" onchange="toggleFbEspecifico()">
             <option value="">Selecione...</option>
             <option>Clube profissional</option>
             <option>Clube de base</option>
@@ -1657,6 +1658,10 @@ input[type=range]{flex:1;accent-color:var(--v);height:3px;}
             <option>Múltiplos clientes</option>
             <option>Ainda em formação</option>
           </select>
+        </div>
+        <div class="fgrp" id="fb-especifico-wrap" style="display:none;">
+          <label class="flbl" id="fb-especifico-label">Nome do clube / atleta</label>
+          <input class="finp" id="fb-especifico" placeholder="Informe o nome...">
         </div>
       </div>
     </div>
@@ -2942,6 +2947,27 @@ function selCat(btn, cid, val) {
   if(inp) inp.value = val;
 }
 
+
+function toggleFbEspecifico() {
+  var ctx = document.getElementById('fb-contexto');
+  var wrap = document.getElementById('fb-especifico-wrap');
+  var lbl = document.getElementById('fb-especifico-label');
+  var inp = document.getElementById('fb-especifico');
+  if(!ctx || !wrap) return;
+  var val = ctx.value;
+  if(val === 'Clube profissional' || val === 'Clube de base') {
+    wrap.style.display = 'flex';
+    if(lbl) lbl.textContent = 'Qual clube?';
+    if(inp) inp.placeholder = 'Nome do clube...';
+  } else if(val === 'Atletas individuais' || val === 'Múltiplos clientes') {
+    wrap.style.display = 'flex';
+    if(lbl) lbl.textContent = 'Com quais atletas trabalha?';
+    if(inp) inp.placeholder = 'Ex: atletas amadores, categorias de base...';
+  } else {
+    wrap.style.display = 'none';
+  }
+}
+
 async function enviarFeedback() {
   if(!cU) return;
   var btn = document.getElementById('fb-submit-btn');
@@ -2953,6 +2979,7 @@ async function enviarFeedback() {
     user_id: cU.id,
     email: cU.email,
     nome: document.getElementById('fb-nome') ? document.getElementById('fb-nome').value : '',
+    especifico: document.getElementById('fb-especifico') ? document.getElementById('fb-especifico').value : '',
     onde_trabalha: document.getElementById('fb-onde') ? document.getElementById('fb-onde').value : '',
     area: document.getElementById('fb-area') ? document.getElementById('fb-area').value : '',
     contexto: document.getElementById('fb-contexto') ? document.getElementById('fb-contexto').value : '',
