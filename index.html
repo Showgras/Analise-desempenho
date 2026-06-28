@@ -589,21 +589,7 @@ input[type=range]{flex:1;accent-color:var(--v);height:3px;}
 
 
 <!-- SB UPLOAD -->
-<div class="sidebar hidden" id="sb-upload">
-  <div class="sbs">
-    <div class="sbl">Etapas</div>
-    <button class="sbb active" onclick="gt('up-plat')"><span class="si">📱</span>Plataforma</button>
-    <button class="sbb" onclick="gt('up-img')"><span class="si">📸</span>Upload da imagem</button>
-    <button class="sbb" onclick="gt('up-extrair')"><span class="si">🤖</span>Extrair dados</button>
-    <button class="sbb" onclick="gt('up-resultado')"><span class="si">✅</span>Resultado</button>
-  </div>
-  <div class="sbs">
-    <div class="sbl">Plataformas suportadas</div>
-    <div style="padding:0 8px;">
-      <p style="font-size:11px;color:#555;line-height:1.8;">Sofascore • Wyscout<br>InStat • FlashScore<br>Planilha Excel<br>Qualquer screenshot</p>
-    </div>
-  </div>
-</div>
+<div class="sidebar hidden" id="sb-upload"></div>
 
 
 <!-- SB PLANOS -->
@@ -1016,140 +1002,38 @@ input[type=range]{flex:1;accent-color:var(--v);height:3px;}
 
 <!-- ===== ABA UPLOAD ===== -->
 <div class="mc hidden" id="tab-upload">
-  <div class="ph">
-    <div class="pt">Upload de Dados</div>
-    <div class="ps">Faça upload de um print de qualquer plataforma — a IA extrai e preenche os campos automaticamente.</div>
-  </div>
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;padding:40px 20px;">
 
-  <div class="upload-aviso">
-    ⚠️ <strong>Feature em preparação.</strong> O upload com extração automática por IA requer o proxy Cloudflare configurado. Assim que estiver ativo, essa aba vai funcionar completamente. Você já pode explorar a interface.
-  </div>
-
-  <!-- Passo 1: Plataforma -->
-  <div class="sblk" id="up-plat">
-    <div class="stitle">📱 Passo 1 — Selecione a plataforma</div>
-    <p style="color:#888;font-size:13px;margin-bottom:16px;">Informe de onde vem o print para que a IA saiba como interpretar os dados.</p>
-    <div class="plat-chips" id="up-plat-chips">
-      <div class="plat-chip sel" onclick="selPlat(this,'Sofascore')">Sofascore</div>
-      <div class="plat-chip" onclick="selPlat(this,'Wyscout')">Wyscout</div>
-      <div class="plat-chip" onclick="selPlat(this,'InStat')">InStat</div>
-      <div class="plat-chip" onclick="selPlat(this,'FlashScore')">FlashScore</div>
-      <div class="plat-chip" onclick="selPlat(this,'Catapult GPS')">Catapult GPS</div>
-      <div class="plat-chip" onclick="selPlat(this,'STATSports')">STATSports</div>
-      <div class="plat-chip" onclick="selPlat(this,'Planilha Excel')">Planilha Excel</div>
-      <div class="plat-chip" onclick="selPlat(this,'Outro')">Outro</div>
+    <div style="width:80px;height:80px;background:var(--vd);border:0.5px solid var(--vb);border-radius:20px;display:flex;align-items:center;justify-content:center;margin-bottom:24px;">
+      <i class="ti ti-upload" style="font-size:36px;color:var(--v);" aria-hidden="true"></i>
     </div>
-    <input type="hidden" id="up-plat-val" value="Sofascore">
-    <div class="fg" style="margin-top:16px;">
-      <div class="fgrp">
-        <label class="flbl">Tipo de dado no print <i class="tip-icon">?<span class="tip-box">O que aparece na imagem? Métricas de um atleta específico, estatísticas coletivas, dados de GPS...</span></i></label>
-        <select class="fsel" id="up-tipo">
-          <option value="atleta">Métricas de atleta individual</option>
-          <option value="time">Estatísticas coletivas do time</option>
-          <option value="gps">Dados de GPS / carga física</option>
-          <option value="comparativo">Comparativo entre atletas</option>
-          <option value="scout">Perfil de scouting</option>
-        </select>
+
+    <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;color:var(--v);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px;">Em breve</div>
+
+    <div style="font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;color:var(--t1);letter-spacing:-.3px;margin-bottom:12px;">Upload de Dados com IA</div>
+
+    <div style="font-size:13px;color:var(--t4);line-height:1.8;max-width:480px;margin-bottom:32px;">Faça upload de um print de qualquer plataforma — Sofascore, Wyscout, InStat, FlashScore ou planilha Excel — e a IA extrai e preenche os campos automaticamente para você.</div>
+
+    <div style="display:flex;flex-direction:column;gap:10px;max-width:360px;width:100%;margin-bottom:32px;">
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--bg-card);border:0.5px solid var(--b1);border-radius:8px;text-align:left;">
+        <i class="ti ti-photo" style="font-size:18px;color:var(--v);flex-shrink:0;" aria-hidden="true"></i>
+        <div><div style="font-size:12px;font-weight:500;color:var(--t2);">Print de qualquer plataforma</div><div style="font-size:11px;color:var(--t4);">Sofascore, Wyscout, InStat, FlashScore</div></div>
       </div>
-      <div class="fgrp">
-        <label class="flbl">Nome do atleta (se aplicável)</label>
-        <input class="finp" id="up-atleta-nome" placeholder="Nome do atleta no print">
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--bg-card);border:0.5px solid var(--b1);border-radius:8px;text-align:left;">
+        <i class="ti ti-table" style="font-size:18px;color:var(--v);flex-shrink:0;" aria-hidden="true"></i>
+        <div><div style="font-size:12px;font-weight:500;color:var(--t2);">Planilhas Excel e CSV</div><div style="font-size:11px;color:var(--t4);">A IA lê, interpreta e organiza os dados</div></div>
       </div>
-    </div>
-  </div>
-
-  <!-- Passo 2: Upload -->
-  <div class="sblk" id="up-img">
-    <div class="stitle">📸 Passo 2 — Faça o upload do print</div>
-    <div class="upload-zone" id="up-dropzone"
-      onclick="document.getElementById('up-file-input').click()"
-      ondragover="event.preventDefault();this.classList.add('drag')"
-      ondragleave="this.classList.remove('drag')"
-      ondrop="handleDrop(event)">
-      <div class="upload-icon">📸</div>
-      <div class="upload-title">Clique para selecionar ou arraste a imagem aqui</div>
-      <div class="upload-sub">PNG, JPG, JPEG ou WEBP — até 10MB</div>
-    </div>
-    <input type="file" id="up-file-input" accept="image/*" style="display:none;" onchange="handleFileSelect(event)">
-
-    <div class="upload-preview hidden" id="up-preview">
-      <div class="upload-preview-header">
-        <span class="upload-preview-nome" id="up-preview-nome">imagem.png</span>
-        <button class="btn bg" style="padding:5px 12px;font-size:11px;" onclick="removerImagem()">✕ Remover</button>
-      </div>
-      <img id="up-preview-img" src="" alt="Preview da imagem">
-    </div>
-
-    <div style="margin-top:14px;">
-      <label class="flbl">Contexto adicional (opcional) <i class="tip-icon">?<span class="tip-box">Informe algo que pode ajudar a IA a interpretar melhor: "dados da última rodada", "estatísticas dos últimos 5 jogos", etc.</span></i></label>
-      <textarea class="ftxt" id="up-contexto" style="margin-top:6px;min-height:70px;" placeholder="Ex: Estatísticas do Campeonato Paulista — últimas 5 partidas. Atleta é lateral direito em sistema 4-3-3..."></textarea>
-    </div>
-  </div>
-
-  <!-- Passo 3: Extrair -->
-  <div class="sblk" id="up-extrair">
-    <div class="stitle">🤖 Passo 3 — Extrair dados com IA</div>
-    <p style="color:#888;font-size:13px;margin-bottom:16px;">A IA vai analisar a imagem, identificar os dados e preencher os campos automaticamente.</p>
-
-    <div class="fg" style="margin-bottom:16px;">
-      <div class="fgrp">
-        <label class="flbl">O que extrair da imagem</label>
-        <div class="plat-chips">
-          <div class="plat-chip sel" onclick="selExtrair(this,'tudo')">Tudo que encontrar</div>
-          <div class="plat-chip" onclick="selExtrair(this,'tecnicas')">Só métricas técnicas</div>
-          <div class="plat-chip" onclick="selExtrair(this,'fisicas')">Só métricas físicas</div>
-          <div class="plat-chip" onclick="selExtrair(this,'scores')">Scores e ratings</div>
-        </div>
-        <input type="hidden" id="up-extrair-val" value="tudo">
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--bg-card);border:0.5px solid var(--b1);border-radius:8px;text-align:left;">
+        <i class="ti ti-bolt" style="font-size:18px;color:var(--v);flex-shrink:0;" aria-hidden="true"></i>
+        <div><div style="font-size:12px;font-weight:500;color:var(--t2);">Preenchimento automático</div><div style="font-size:11px;color:var(--t4);">Campos preenchidos em segundos, prontos para análise</div></div>
       </div>
     </div>
 
-    <button class="btn bp" id="up-btn-extrair" onclick="extrairDados()" style="width:100%;justify-content:center;">
-      🤖 Extrair dados da imagem
-    </button>
-
-    <div id="up-extraindo" class="hidden" style="text-align:center;padding:24px;">
-      <div class="ia-loading" style="justify-content:center;">
-        <div class="dp"><span></span><span></span><span></span></div>
-        <span>Analisando imagem...</span>
-      </div>
-      <p style="font-size:12px;color:#555;margin-top:8px;">A IA está lendo os dados do print. Pode levar alguns segundos.</p>
-    </div>
-  </div>
-
-  <!-- Passo 4: Resultado -->
-  <div class="sblk hidden" id="up-resultado">
-    <div class="stitle">✅ Dados extraídos</div>
-
-    <div class="extracao-status" id="up-campos-extraidos"></div>
-
-    <div style="margin-top:16px;padding-top:16px;border-top:1px solid #1e1e1e;">
-      <p style="font-size:13px;color:#888;margin-bottom:14px;">Revise os dados extraídos abaixo. Você pode editar antes de usar.</p>
-      <div id="up-campos-editaveis"></div>
-    </div>
-
-    <div class="br" style="margin-top:16px;">
-      <button class="btn bp" onclick="usarDadosExtraidos()">✅ Usar esses dados na análise de atleta</button>
-      <button class="btn bs" onclick="gerarAnaliseDirecta()">⚡ Gerar análise direto</button>
-      <button class="btn bg" onclick="limparUpload()">🗑️ Limpar e recomeçar</button>
-    </div>
-
-    <div class="vid-output-box hidden" id="up-output">
-      <div class="vid-output-title">📋 Análise gerada — copie e cole no Claude</div>
-      <div class="vid-output-text" id="up-texto"></div>
-      <div class="fbbar" style="margin-top:12px;padding-top:12px;border-top:1px solid #1e1e1e;">
-        <div style="display:flex;gap:8px;margin-left:auto;">
-          <button class="btn bs" style="padding:7px 14px;font-size:12px;" onclick="expTXT('up-texto',v('up-atleta-nome')||'upload')">⬇ TXT</button>
-          <button class="btn bg" style="padding:7px 14px;font-size:12px;" onclick="cpIA('up-texto')">📋 Copiar</button>
-        </div>
-      </div>
+    <div style="background:var(--vd);border:0.5px solid var(--vb);border-radius:8px;padding:12px 20px;font-size:12px;color:var(--v);">
+      Esta funcionalidade requer integração com IA — disponível em breve após a configuração do Cloudflare Workers.
     </div>
   </div>
 </div>
-
-
-
-<!-- ===== ABA PLANOS ===== -->
 <div class="mc hidden" id="tab-planos">
   <div class="ph"><div class="pt">Planos e Assinatura</div><div class="ps">Escolha o plano ideal para o seu trabalho como analista.</div></div>
 
@@ -1824,98 +1708,14 @@ input[type=range]{flex:1;accent-color:var(--v);height:3px;}
 
 <!-- ===== ABA FEEDBACK (só criador) ===== -->
 <div class="mc hidden" id="tab-feedback">
-  <div class="ph"><div class="pt">Painel de Feedback</div><div class="ps">Avaliações dos beta testers em tempo real.</div></div>
-  <div id="fb-resumo">
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;" id="fb-stats-grid"></div>
-    <div class="sblk">
-      <div class="stitle">📊 Média por tipo de relatório</div>
-      <div id="fb-medias"></div>
-    </div>
+  <div class="ph">
+    <div class="pt">Painel de Feedback</div>
+    <div class="ps">Avaliações dos beta testers em tempo real.</div>
   </div>
-  <div id="fb-lista" style="margin-top:24px;">
-    <div class="stitle" style="margin-bottom:16px;">📋 Todos os feedbacks</div>
+  <div class="kgrid" id="fb-stats"></div>
+  <div style="margin-top:4px;">
+    <div class="stitle" style="margin-bottom:12px;"><i class="ti ti-message" aria-hidden="true"></i> Todos os feedbacks</div>
     <div id="fb-rows"></div>
-  </div>
-</div>
-
-</div>
-</div>
-
-
-<!-- MODAL EVOLUÇÃO -->
-<div class="mov hidden" id="mEvo" onclick="if(event.target===this)fEvo()">
-  <div class="evo-modal">
-    <div class="mhdr">
-      <div>
-        <div class="mttl" id="eNome">Evolução do atleta</div>
-        <div style="font-size:12px;color:#555;margin-top:2px;" id="ePos">—</div>
-      </div>
-      <button class="mcls" onclick="fEvo()">✕</button>
-    </div>
-    <div class="mbdy">
-      <div class="evo-tabs">
-        <button class="evo-tab active" onclick="swEvo('grafico',this)">📈 Gráfico de evolução</button>
-        <button class="evo-tab" onclick="swEvo('comparar',this)">⚖️ Comparar períodos</button>
-        <button class="evo-tab" onclick="swEvo('historico',this)">📋 Todos os períodos</button>
-      </div>
-
-      <!-- GRÁFICO -->
-      <div class="evo-section active" id="evo-grafico">
-        <div class="chart-wrap">
-          <div class="chart-title">Score geral ao longo do tempo</div>
-          <canvas id="evo-chart-score" height="80"></canvas>
-        </div>
-        <div class="chart-wrap">
-          <div class="chart-title">Métricas por período</div>
-          <div class="metric-selector" id="evo-met-sel"></div>
-          <canvas id="evo-chart-met" height="80"></canvas>
-        </div>
-      </div>
-
-      <!-- COMPARAR -->
-      <div class="evo-section" id="evo-comparar">
-        <div class="fg" style="margin-bottom:16px;">
-          <div class="fgrp">
-            <label class="flbl">Período A</label>
-            <select class="fsel" id="evo-perA" onchange="renderComp()"></select>
-          </div>
-          <div class="fgrp">
-            <label class="flbl">Período B</label>
-            <select class="fsel" id="evo-perB" onchange="renderComp()"></select>
-          </div>
-        </div>
-        <div id="evo-comp-result"></div>
-      </div>
-
-      <!-- HISTÓRICO -->
-      <div class="evo-section" id="evo-historico">
-        <div id="evo-hist-lista"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL -->
-<div class="mov hidden" id="mOv" onclick="if(event.target===this)fModal()">
-  <div class="modal">
-    <div class="mhdr"><div class="mttl" id="mTtl">Relatório</div><button class="mcls" onclick="fModal()">✕</button></div>
-    <div class="mbdy">
-      <div id="mR" class="hidden">
-        <div class="rwrap" style="margin-bottom:20px;">
-          <div class="rcard"><div class="rt" id="mRn">—</div><div class="rs" id="mRp">—</div><canvas class="rc" id="mRc" width="320" height="280"></canvas></div>
-          <div class="rcard"><div class="rt">Scores</div><div class="slist" id="mSc"></div>
-            <div class="sglobal"><div class="sgn" id="mSn">—</div><div class="sgl">Score geral</div></div>
-          </div>
-        </div>
-      </div>
-      <div class="iares" id="mCont" style="max-height:50vh;"></div>
-      <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;">
-        <button class="btn bs" onclick="expTXT('mCont',document.getElementById('mTtl').textContent)">⬇ TXT</button>
-        <button class="btn bs" onclick="expPDFM()">⬇ PDF</button>
-        <button class="btn bg" onclick="cpIA('mCont')">📋 Copiar</button>
-        <button class="btn bd" style="margin-left:auto;" onclick="delRel()">🗑 Excluir</button>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -2639,17 +2439,34 @@ async function darFB(tipo,nota,el){
   if(rid&&cU)await supa.from('feedbacks').insert({user_id:cU.id,relatorio_id:rid,nota:nota});
 }
 async function loadFB(){
-  var r=await supa.from('feedbacks').select('*,relatorios(tipo,nome)').order('created_at',{ascending:false});
-  var fbs=r.data||[];
-  if(!fbs.length){document.getElementById('fb-stats').innerHTML='<div style="color:#555;font-size:13px;grid-column:1/-1;">Nenhum feedback ainda.</div>';document.getElementById('fb-rows').innerHTML='';return;}
-  var tot=fbs.length;
-  var med=(fbs.reduce(function(a,f){return a+f.nota;},0)/tot).toFixed(1);
-  var bons=fbs.filter(function(f){return f.nota>=4;}).length;
-  var ruins=fbs.filter(function(f){return f.nota<=2;}).length;
-  document.getElementById('fb-stats').innerHTML='<div class="stcard"><div class="stnum">'+tot+'</div><div class="stlbl">Total avaliacoes</div></div><div class="stcard"><div class="stnum">'+med+' estrela</div><div class="stlbl">Nota media</div></div><div class="stcard"><div class="stnum">'+bons+'</div><div class="stlbl">4-5 estrelas</div></div><div class="stcard"><div class="stnum">'+ruins+'</div><div class="stlbl">1-2 estrelas</div></div>';
-  var tmap={atleta:'ta',clube:'tc',prospeccao:'tpr'};
-  var lmap={atleta:'Atleta',clube:'Clube',prospeccao:'Prospeccao'};
-  document.getElementById('fb-rows').innerHTML=fbs.map(function(f){return '<div style="display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #1e1e1e;"><span style="color:#FFB300;font-size:14px;">'+'estrela'.repeat(f.nota)+'</span><span class="htag '+(tmap[f.relatorios&&f.relatorios.tipo]||'')+'">'+(lmap[f.relatorios&&f.relatorios.tipo]||'--')+'</span><span style="font-size:13px;color:#f0f0f0;flex:1;">'+(f.relatorios&&f.relatorios.nome||'--')+'</span><span style="font-size:11px;color:#555;">'+new Date(f.created_at).toLocaleDateString('pt-BR')+'</span></div>';}).join('');
+  if(!cU) return;
+  supa.from('feedbacks').select('*,relatorios(tipo,nome)').order('created_at',{ascending:false}).then(function(r){
+    var fbs = r.data || [];
+    var stats = document.getElementById('fb-stats');
+    var rows = document.getElementById('fb-rows');
+    if(!fbs.length){
+      if(stats) stats.innerHTML = '<div style="grid-column:1/-1;color:var(--t4);font-size:13px;">Nenhum feedback ainda.</div>';
+      if(rows) rows.innerHTML = '';
+      return;
+    }
+    var tot = fbs.length;
+    var med = (fbs.reduce(function(a,f){return a+f.nota;},0)/tot).toFixed(1);
+    var bons = fbs.filter(function(f){return f.nota>=4;}).length;
+    var ruins = fbs.filter(function(f){return f.nota<=2;}).length;
+    if(stats) stats.innerHTML = [
+      {n:tot, l:'Total avaliacoes'},
+      {n:med+' estrela', l:'Nota media'},
+      {n:bons, l:'4-5 estrelas'},
+      {n:ruins, l:'1-2 estrelas'}
+    ].map(function(k){return '<div class="kcard"><div class="knum">'+k.n+'</div><div class="klbl">'+k.l+'</div></div>';}).join('');
+    var tmap = {atleta:'ta',clube:'tc',prospeccao:'tpr'};
+    var lmap = {atleta:'Atleta',clube:'Clube',prospeccao:'Prospeccao'};
+    if(rows) rows.innerHTML = fbs.map(function(f){
+      var tipo = f.relatorios && f.relatorios.tipo || '';
+      var nome = f.relatorios && f.relatorios.nome || '--';
+      return '<div style="display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:0.5px solid var(--b1);"><span style="color:#FFB300;font-size:14px;">'+'★'.repeat(f.nota)+'</span><span class="htag '+(tmap[tipo]||'')+'">'+(lmap[tipo]||'--')+'</span><span style="font-size:13px;color:var(--t1);flex:1;">'+nome+'</span><span style="font-size:11px;color:var(--t4);">'+new Date(f.created_at).toLocaleDateString('pt-BR')+'</span></div>';
+    }).join('');
+  });
 }
 
 // HISTORICO
